@@ -1,0 +1,4 @@
+winrt
+qasync
+pywin32
+PyQt5==5.15.2
