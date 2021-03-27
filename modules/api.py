@@ -86,7 +86,7 @@ async def get_thumbnail(media_info: dict):
     binary = BytesIO()
     binary.write(bytearray(byte_buffer))
     binary.seek(0)
-    print(len(bytearray(byte_buffer)))
+    # print(len(bytearray(byte_buffer)))
 
     try:
         img = Image.open(binary)

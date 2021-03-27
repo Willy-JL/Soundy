@@ -150,7 +150,7 @@ class SoundyGUI(QMainWindow):
             while self.title.fontMetrics().boundingRect(title[:-cutoff] + "...").width() > 156:
                 cutoff += 1
             self.title.setText(title[:-cutoff] + "...")
-            self.title.setToolTip(title)
+            self.title.setToolTip(title[3:])
         else:
             self.title.setText(title)
             self.title.setToolTip("")
@@ -162,7 +162,7 @@ class SoundyGUI(QMainWindow):
             while self.artist.fontMetrics().boundingRect(artist[:-cutoff] + "...").width() > 156:
                 cutoff += 1
             self.artist.setText(artist[:-cutoff] + "...")
-            self.artist.setToolTip(artist)
+            self.artist.setToolTip(artist[3:])
         else:
             self.artist.setText(artist)
             self.artist.setToolTip("")
