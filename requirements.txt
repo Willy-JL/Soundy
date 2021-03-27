@@ -1,4 +1,5 @@
 winrt
 qasync
+Pillow
 pywin32
 PyQt5==5.15.2

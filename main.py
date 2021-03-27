@@ -3,7 +3,7 @@ from qasync import QEventLoop
 import asyncio
 import sys
 
-from modules import api, globals, gui, interactions, singleton
+from modules import callbacks, globals, gui, singleton
 
 
 try:
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # Finally show GUI
     globals.gui.show()
 
-    globals.loop.create_task(interactions.update_loop())
+    globals.loop.create_task(callbacks.update_loop())
 
     # Set off loop
     with globals.loop:

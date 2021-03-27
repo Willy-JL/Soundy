@@ -5,3 +5,6 @@ font_track = None
 font_artist = None
 font_awesome = None
 prev_state = None
+prev_position = None
+paused = None
+blank_cover_art = None

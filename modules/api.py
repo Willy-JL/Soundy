@@ -75,7 +75,10 @@ async def get_thumbnail(media_info: dict):
     thumb_stream_ref = media_info['thumbnail']
     thumb_read_buffer = Buffer(5000000)
 
-    await read_stream_into_buffer(thumb_stream_ref, thumb_read_buffer)
+    try:
+        await read_stream_into_buffer(thumb_stream_ref, thumb_read_buffer)
+    except AttributeError:
+        return None
 
     buffer_reader = DataReader.from_buffer(thumb_read_buffer)
     byte_buffer = buffer_reader.read_bytes(thumb_read_buffer.length)
