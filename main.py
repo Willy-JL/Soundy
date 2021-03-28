@@ -25,7 +25,10 @@ if __name__ == '__main__':
 
     # Setup fonts
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/materialdesignicons-webfont.ttf")
-    globals.font_mdi = QtGui.QFont('Material Design Icons', 26)
+    globals.font_mdi_38 = QtGui.QFont('Material Design Icons', 38)
+    globals.font_mdi_26 = QtGui.QFont('Material Design Icons', 26)
+    globals.font_mdi_20 = QtGui.QFont('Material Design Icons', 20)
+    globals.font_mdi_13 = QtGui.QFont('Material Design Icons', 13)
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Medium.ttf")
     globals.font_track = QtGui.QFont('Poppins Medium', 13, 400)
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Light.ttf")
