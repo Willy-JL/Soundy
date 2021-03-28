@@ -304,7 +304,7 @@ class SoundyGUI(QMainWindow):
             [QPropertyAnimation(self.close_button_opacity, b"opacity"), True ]
         ]
         for anim in anim_list:
-            anim[0].setDuration(100)
+            anim[0].setDuration(75)
             anim_toggle = toggle
             if anim[1]:
                 anim_toggle = not anim_toggle
@@ -316,12 +316,7 @@ class SoundyGUI(QMainWindow):
                 anim[0].setEndValue(1.0)
         for anim in anim_list:
             anim[0].start()
-        await asyncio.sleep(0.2)  # Wait for animation to finish
-        for anim in anim_list:
-            vis_toggle = not toggle
-            if anim[1]:
-                vis_toggle = not vis_toggle
-            anim[0].targetObject().parent().setVisible(vis_toggle)
+        await asyncio.sleep(0.15)  # Wait for animation to finish
 
     def update_cover_art(self, thumbnail=[None, None]):
         if thumbnail[0]:
