@@ -24,7 +24,7 @@ if __name__ == '__main__':
     globals.loop = asyncio.get_event_loop()
 
     # Setup fonts
-    QtGui.QFontDatabase.addApplicationFont("materialdesignicons-webfont.ttf")
+    QtGui.QFontDatabase.addApplicationFont("resources/fonts/materialdesignicons-webfont.ttf")
     globals.font_mdi = QtGui.QFont('Material Design Icons', 26)
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Medium.ttf")
     globals.font_track = QtGui.QFont('Poppins Medium', 13, 400)
