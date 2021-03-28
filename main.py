@@ -16,16 +16,16 @@ if __name__ == '__main__':
 
     # Create App
     globals.app = QtWidgets.QApplication(sys.argv)
-    globals.app.setQuitOnLastWindowClosed(False)
+    # globals.app.setQuitOnLastWindowClosed(False)
 
     # Configure asyncio loop to work with PyQt
     loop = QEventLoop(globals.app)
     asyncio.set_event_loop(loop)
     globals.loop = asyncio.get_event_loop()
 
-    # Setup font awesome for icons
-    QtGui.QFontDatabase.addApplicationFont("resources/fonts/Font Awesome 5 Free-Solid-900.otf")
-    globals.font_awesome = QtGui.QFont('Font Awesome 5 Free Solid', 16)
+    # Setup fonts
+    QtGui.QFontDatabase.addApplicationFont("materialdesignicons-webfont.ttf")
+    globals.font_mdi = QtGui.QFont('Material Design Icons', 26)
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Medium.ttf")
     globals.font_track = QtGui.QFont('Poppins Medium', 13, 400)
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Light.ttf")
@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
     # Setup GUIs
     globals.gui = gui.SoundyGUI()
-    globals.app.setStyleSheet(gui.QSS)
 
     # Finally show GUI
     globals.gui.show()
