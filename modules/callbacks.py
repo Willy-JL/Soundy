@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPixmap
+# from pprint import pprint
 import asyncio
 import time
 
@@ -8,13 +8,14 @@ from modules import api, globals
 async def update_loop():
     while True:
         media_info = await api.get_media_info()
+        # pprint(media_info)
 
         if media_info:
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
-            elif media_info[0]["playback_status"] == 5:
+            elif media_info[0]["playback_status"] != 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
@@ -31,17 +32,18 @@ async def update_loop():
                 pixmap = await api.get_thumbnail(media_info[2])
                 if pixmap:
                     globals.gui.update_cover_art(pixmap)
-                    globals.blank_cover_art = False
                 else:
-                    globals.blank_cover_art = True
                     globals.gui.update_cover_art()
                 globals.prev_state = cur_state
-            globals.app.processEvents()
-        if globals.blank_cover_art:
-            pixmap = await api.get_thumbnail(media_info[2])
-            if pixmap:
-                globals.gui.update_cover_art(pixmap)
-                globals.blank_cover_art = False
+            if globals.blank_cover_art:
+                pixmap = await api.get_thumbnail(media_info[2])
+                if pixmap:
+                    globals.gui.update_cover_art(pixmap)
+        else:
+            globals.gui.time_scrubber.setValue(0)
+            globals.prev_position = 0
+            globals.paused = True
+            globals.gui.update_cover_art()
         next_update = time.time() + 1
         while time.time() < next_update:
             if not globals.gui.time_scrubber.scrubbing and not globals.paused:

@@ -85,9 +85,7 @@ class SoundyGUI(QMainWindow):
         self.cover_art = QLabel(self)
         self.cover_art.setObjectName(u"cover_art")
         self.cover_art.setFixedSize(69, 69)
-
-        pixmap = QPixmap("resources/icon_small.png")
-        self.update_cover_art(pixmap)
+        self.update_cover_art()
 
         self.main_grid.addWidget(self.cover_art, 0, 0, 1, 1)
 
@@ -250,8 +248,10 @@ class SoundyGUI(QMainWindow):
     def update_cover_art(self, pixmap=None):
         if pixmap:
             pmap = pixmap
+            globals.blank_cover_art = False
         else:
             pmap = QPixmap("resources/icon_small.png")
+            globals.blank_cover_art = True
         rounded = QPixmap(pmap.size())
         rounded.fill(QColor("transparent"))
         painter = QPainter(rounded)
