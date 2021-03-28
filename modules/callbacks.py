@@ -13,10 +13,12 @@ async def update_loop():
         if media_info:
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                globals.gui.play_pause.set_state("playing")
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
             elif media_info[0]["playback_status"] != 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                globals.gui.play_pause.set_state("paused")
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
 
@@ -41,6 +43,7 @@ async def update_loop():
                     globals.gui.update_cover_art(thumbnail)
         else:
             globals.gui.time_scrubber.setValue(0)
+            globals.gui.play_pause.set_state("paused")
             globals.prev_position = 0
             globals.paused = True
             globals.gui.update_cover_art()

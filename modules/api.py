@@ -7,6 +7,8 @@ from colorthief import ColorThief
 from qasync import asyncSlot
 from io import BytesIO
 
+from modules import globals
+
 
 async def get_media_session():
     sessions = await MediaManager.request_async()
@@ -19,6 +21,7 @@ async def get_media_info():
 
         state = current_session.get_playback_info()
         state_dict = {song_attr: state.__getattribute__(song_attr) for song_attr in dir(state) if song_attr[0] != '_' and song_attr != 'controls' and song_attr != 'playback_rate' and song_attr != 'playback_type'}
+
         timeline = current_session.get_timeline_properties()
         timeline_dict = {song_attr: int(timeline.__getattribute__(song_attr).duration / 10000) for song_attr in dir(timeline) if song_attr[0] != '_' and isinstance(timeline.__getattribute__(song_attr), TimeSpan) and song_attr != 'end_time' and song_attr != 'start_time'}
 
@@ -27,7 +30,7 @@ async def get_media_info():
         properties_dict['is_spotify'] = (current_session.source_app_user_model_id == 'Spotify.exe')
 
         return state_dict, timeline_dict, properties_dict
-    
+
     return None
 
 
@@ -35,6 +38,10 @@ async def get_media_info():
 async def play_pause(*args):
     current_session = await get_media_session()
     if current_session:
+        if globals.paused:
+            globals.gui.play_pause.set_state("playing")
+        else:
+            globals.gui.play_pause.set_state("paused")
         await current_session.try_toggle_play_pause_async()
 
 
@@ -92,7 +99,7 @@ async def get_thumbnail(media_info: dict):
     try:
         await read_stream_into_buffer(thumb_stream_ref, thumb_read_buffer)
     except AttributeError:
-        return None
+        return None, None
 
     buffer_reader = DataReader.from_buffer(thumb_read_buffer)
     byte_buffer = buffer_reader.read_bytes(thumb_read_buffer.length)
