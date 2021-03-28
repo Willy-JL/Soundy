@@ -98,7 +98,7 @@ class SoundyGUI(QMainWindow):
         self.info_section.setFrameShadow(QFrame.Raised)
         self.grid_layout = QGridLayout(self.info_section)
         self.grid_layout.setObjectName(u"grid_layout")
-        self.grid_layout.setVerticalSpacing(4)
+        self.grid_layout.setVerticalSpacing(3)
         self.grid_layout.setHorizontalSpacing(0)
         self.grid_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -127,7 +127,7 @@ class SoundyGUI(QMainWindow):
         self.time_scrubber.setObjectName(u"time_scrubber")
         width = 181
         height = 8
-        radius_br = 5
+        radius_br = 7
         self.time_scrubber.setFixedSize(width, height)
         self.time_scrubber_mask = QRegion(QRect(0, 0, width, height),QRegion.Rectangle)
         rounded = QRegion(width-2*radius_br, height-2*radius_br, 2*radius_br, 2*radius_br, QRegion.Ellipse)
@@ -150,7 +150,7 @@ class SoundyGUI(QMainWindow):
         self.spacer_left = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.grid_layout.addItem(self.spacer_left, 0, 0, 3, 1)
 
-        self.shuffle = MusicButton(self.info_section, print, globals.font_mdi_20, 23, "disabled", {
+        self.shuffle = MusicButton(self.info_section, print, globals.font_mdi_18, 20, "disabled", {
             "enabled": {
                 True:  "󰒝",
                 False: "󰒝"
@@ -210,7 +210,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.skip_next, 0, 4, 4, 1)
 
-        self.repeat = MusicButton(self.info_section, print, globals.font_mdi_20, 23, "disabled", {
+        self.repeat = MusicButton(self.info_section, print, globals.font_mdi_18, 20, "disabled", {
             "queue": {
                 True:  "󰑖",
                 False: "󰑖"
@@ -231,7 +231,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.repeat, 0, 5, 4, 1)
 
-        self.spacer_right = QSpacerItem(18, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.spacer_right = QSpacerItem(24, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.grid_layout.addItem(self.spacer_right, 0, 6, 3, 1)
 
 
@@ -280,11 +280,9 @@ class SoundyGUI(QMainWindow):
 
     def enterEvent(self, event):
         asyncio.get_event_loop().create_task(self.toggle_controls(True))
-        # self.toggle_controls(True)
 
     def leaveEvent(self, event):
         asyncio.get_event_loop().create_task(self.toggle_controls(False))
-        # self.toggle_controls(False)
 
     async def toggle_controls(self, toggle):
         anim_list = [
