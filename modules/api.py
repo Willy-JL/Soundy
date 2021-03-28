@@ -3,6 +3,7 @@ from winrt.windows.storage.streams import DataReader, Buffer, InputStreamOptions
 from winrt.windows.foundation import TimeSpan
 from PIL import Image, UnidentifiedImageError
 from PyQt5.QtGui import QImage, QPixmap
+from qasync import asyncSlot
 from io import BytesIO
 
 
@@ -29,19 +30,22 @@ async def get_media_info():
     return None
 
 
-async def play_pause():
+@asyncSlot()
+async def play_pause(*args):
     current_session = await get_media_session()
     if current_session:
         await current_session.try_toggle_play_pause_async()
 
 
-async def skip_prev():
+@asyncSlot()
+async def skip_prev(*args):
     current_session = await get_media_session()
     if current_session:
         await current_session.try_skip_previous_async()
 
 
-async def skip_next():
+@asyncSlot()
+async def skip_next(*args):
     current_session = await get_media_session()
     if current_session:
         await current_session.try_skip_next_async()
@@ -68,7 +72,7 @@ async def seek(position: int):
 
 async def read_stream_into_buffer(stream_ref, buffer):
     readable_stream = await stream_ref.open_read_async()
-    readable_stream.read_async(buffer, buffer.capacity, InputStreamOptions.READ_AHEAD)
+    await readable_stream.read_async(buffer, buffer.capacity, InputStreamOptions.READ_AHEAD)
 
 
 async def get_thumbnail(media_info: dict):

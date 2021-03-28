@@ -31,10 +31,10 @@ async def update_loop():
                 pixmap = await api.get_thumbnail(media_info[2])
                 if pixmap:
                     globals.gui.update_cover_art(pixmap)
+                    globals.blank_cover_art = False
                 else:
                     globals.blank_cover_art = True
-                    pixmap = QPixmap("resources/icon_small.png")
-                    globals.gui.update_cover_art(pixmap)
+                    globals.gui.update_cover_art()
                 globals.prev_state = cur_state
             globals.app.processEvents()
         if globals.blank_cover_art:
