@@ -2,4 +2,5 @@ winrt
 qasync
 Pillow
 pywin32
+colorthief
 PyQt5==5.15.2
