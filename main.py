@@ -1,7 +1,26 @@
+import sys
+
+class Logger(object):
+    def __init__(self):
+        self.console = sys.stdout
+        self.log = open("Soundy.log", "a")
+
+    def write(self, message):
+        self.console.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        self.console.flush()
+
+    def __del__(self):
+        self.log.close()
+
+sys.stdout = Logger()
+sys.stderr = sys.stdout
+
 from PyQt5 import QtWidgets, QtGui
 from qasync import QEventLoop
 import asyncio
-import sys
 
 from modules import callbacks, globals, gui, singleton
 
