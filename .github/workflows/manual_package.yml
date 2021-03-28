@@ -23,60 +23,54 @@ jobs:
       - name: Remove redundant libs
         run: |
           rm -rf dist/windows/Soundy/Include
+          rm -rf dist/windows/Soundy/_asyncio.pyd
+          rm -rf dist/windows/Soundy/_elementtree.pyd
+          rm -rf dist/windows/Soundy/_hashlib.pyd
+          rm -rf dist/windows/Soundy/_queue.pyd
+          rm -rf dist/windows/Soundy/_ssl.pyd
+          rm -rf dist/windows/Soundy/_win32sysloader.pyd
           rm -rf dist/windows/Soundy/api-ms-win-*
-          rm -rf dist/windows/Soundy/Qt5WebSockets.dll
-          rm -rf dist/windows/Soundy/Qt5Svg.dll
-          rm -rf dist/windows/Soundy/Qt5Quick.dll
-          rm -rf dist/windows/Soundy/Qt5QmlModels.dll
-          rm -rf dist/windows/Soundy/Qt5Qml.dll
-          rm -rf dist/windows/Soundy/Qt5Network.dll
+          rm -rf dist/windows/Soundy/d3dcompiler_47.dll
+          rm -rf dist/windows/Soundy/libcrypto-1_1.dll
+          rm -rf dist/windows/Soundy/libEGL.dll
+          rm -rf dist/windows/Soundy/libGLESv2.dll
+          rm -rf dist/windows/Soundy/libssl-1_1.dll
+          rm -rf dist/windows/Soundy/MSVCP140.dll
+          rm -rf dist/windows/Soundy/MSVCP140_1.dll
+          rm -rf dist/windows/Soundy/opengl32sw.dll
+          rm -rf dist/windows/Soundy/pyexpat.pyd
           rm -rf dist/windows/Soundy/Qt5DBus.dll
+          rm -rf dist/windows/Soundy/Qt5Network.dll
+          rm -rf dist/windows/Soundy/Qt5Qml.dll
+          rm -rf dist/windows/Soundy/Qt5QmlModels.dll
+          rm -rf dist/windows/Soundy/Qt5Quick.dll
+          rm -rf dist/windows/Soundy/Qt5Svg.dll
+          rm -rf dist/windows/Soundy/Qt5WebSockets.dll
           rm -rf dist/windows/Soundy/ucrtbase.dll
+          rm -rf dist/windows/Soundy/unicodedata.pyd
+          rm -rf dist/windows/Soundy/VCRUNTIME140.dll
 
       - name: Move libs to lib dir
         run: |
           mkdir dist/windows/Soundy/lib
-          mv dist/windows/Soundy/multidict dist/windows/Soundy/lib
-          mv dist/windows/Soundy/tcl8 dist/windows/Soundy/lib
-          mv dist/windows/Soundy/yarl dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_asyncio.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_ctypes.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_hashlib.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_overlapped.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_queue.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_socket.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_ssl.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_tkinter.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/_win32sysloader.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/d3dcompiler_47.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/libcrypto-1_1.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/libEGL.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/libffi-7.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/libGLESv2.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/libssl-1_1.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/MSVCP140.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/MSVCP140_1.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/opengl32sw.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/python3.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/pywintypes38.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/Qt5Core.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/Qt5Gui.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/Qt5Widgets.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/select.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/tcl86t.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/tk86t.dll dist/windows/Soundy/lib
-          mv dist/windows/Soundy/unicodedata.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/VCRUNTIME140.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/win32api.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/win32event.pyd dist/windows/Soundy/lib
-          mv dist/windows/Soundy/win32wnet.pyd dist/windows/Soundy/lib
 
-      - name: Move python files to dist folder
-        run: |
-          mv Soundy.py dist/windows/Soundy
-          mv Soundy.sh dist/windows/Soundy
-          mv requirements_linux.txt dist/windows/Soundy
-          mv requirements.txt dist/windows/Soundy
-          mv update.py dist/windows/Soundy
-          mv update.exe dist/windows/Soundy
-          mv modules dist/windows/Soundy
+      - name: Purge old artifacts
+        uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          expire-in: 0
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
