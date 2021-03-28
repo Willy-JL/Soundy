@@ -98,7 +98,7 @@ class SoundyGUI(QMainWindow):
         self.info_section.setFrameShadow(QFrame.Raised)
         self.grid_layout = QGridLayout(self.info_section)
         self.grid_layout.setObjectName(u"grid_layout")
-        self.grid_layout.setVerticalSpacing(0)
+        self.grid_layout.setVerticalSpacing(4)
         self.grid_layout.setHorizontalSpacing(0)
         self.grid_layout.setContentsMargins(0, 0, 0, 0)
 
