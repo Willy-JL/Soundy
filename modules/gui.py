@@ -256,12 +256,20 @@ class SoundyGUI(QMainWindow):
 
         QMetaObject().connectSlotsByName(self)
 
+        settings = QSettings("WillyJL", "Soundy")
+        if settings.value("geometry"):
+            self.restoreGeometry(settings.value("geometry"))
+        if settings.value("windowState"):
+            self.restoreState(settings.value("windowState"))
 
         self.setWindowTitle("Soundy")
         self.update_track_name("Soundy")
         self.update_artist_name("By WillyJL")
 
     def closeEvent(self, event):
+        settings = QSettings("WillyJL", "Soundy")
+        settings.setValue("geometry", self.saveGeometry())
+        settings.setValue("windowState", self.saveState())
         globals.loop.stop()
         event.accept()
 
