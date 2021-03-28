@@ -3,6 +3,7 @@ from winrt.windows.storage.streams import DataReader, Buffer, InputStreamOptions
 from winrt.windows.foundation import TimeSpan
 from PIL import Image, UnidentifiedImageError
 from PyQt5.QtGui import QImage, QPixmap
+from colorthief import ColorThief
 from qasync import asyncSlot
 from io import BytesIO
 
@@ -70,6 +71,15 @@ async def seek(position: int):
         await current_session.try_change_playback_position_async(position * 10000)
 
 
+def find_colors(palette):
+    results = []
+    for color in palette:
+        lightness = sum(color) / 3
+        results.append([color, lightness])
+    results.sort(key=lambda x: x[1])
+    return results[0], results[-1]
+
+
 async def read_stream_into_buffer(stream_ref, buffer):
     readable_stream = await stream_ref.open_read_async()
     await readable_stream.read_async(buffer, buffer.capacity, InputStreamOptions.READ_AHEAD)
@@ -90,7 +100,6 @@ async def get_thumbnail(media_info: dict):
     binary = BytesIO()
     binary.write(bytearray(byte_buffer))
     binary.seek(0)
-    # print(len(bytearray(byte_buffer)))
 
     try:
         img = Image.open(binary)
@@ -106,7 +115,12 @@ async def get_thumbnail(media_info: dict):
         image_data = binary2.read()
         qimg = QImage.fromData(image_data)
 
-        return QPixmap.fromImage(qimg)
+        binary.seek(0)
+        color_thief = ColorThief(binary)
+        palette = color_thief.get_palette(color_count=6)
+        colors = find_colors(palette)
+
+        return QPixmap.fromImage(qimg), colors
 
     except UnidentifiedImageError:
-        return None
+        return None, None

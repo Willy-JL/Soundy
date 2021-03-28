@@ -317,24 +317,24 @@ class SoundyGUI(QMainWindow):
                 vis_toggle = not vis_toggle
             anim[0].targetObject().parent().setVisible(vis_toggle)
 
-    def update_cover_art(self, pixmap=None):
-        if pixmap:
-            pmap = pixmap
+    def update_cover_art(self, thumbnail=[None, None]):
+        if thumbnail[0]:
+            pixmap = thumbnail[0]
             globals.blank_cover_art = False
         else:
-            pmap = QPixmap("resources/icon_small.png")
+            pixmap = QPixmap("resources/icon_small.png")
             globals.blank_cover_art = True
-        rounded = QPixmap(pmap.size())
+        rounded = QPixmap(pixmap.size())
         rounded.fill(QColor("transparent"))
         painter = QPainter(rounded)
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.setBrush(QBrush(pmap))
+        painter.setBrush(QBrush(pixmap))
         painter.setPen(Qt.NoPen)
         painter.drawRoundedRect(0, 0, 100, 69, 5, 5)
         painter.end()
         self.cover_art.setPixmap(rounded)
-        if pixmap:
-            self.update_style()
+        if thumbnail[0]:
+            self.update_style(thumbnail[1][0], thumbnail[1][1])
         else:
             self.update_style()
 
@@ -358,7 +358,11 @@ class SoundyGUI(QMainWindow):
         else:
             self.artist.setText(artist)
 
-    def update_style(self, accent=None, ground=None):
+    def update_style(self, ground=None, accent=None):
+        if ground:
+            ground = '#%02x%02x%02x' % ground[0]
+        if accent:
+            accent = '#%02x%02x%02x' % accent[0]
         globals.app.setStyleSheet("""
 #main {
     background: """ + (ground if ground else "#1E1E1E") + """;
@@ -388,6 +392,10 @@ QSlider::sub-page:horizontal {
 }
 
 QLabel {
+    color: """ + (accent if accent else "#868686") + """
+}
+
+QPushButton {
     color: """ + (accent if accent else "#868686") + """
 }
 """)

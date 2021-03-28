@@ -29,16 +29,16 @@ async def update_loop():
                 globals.gui.time_scrubber.setMinimum(media_info[1]["min_seek_time"])
                 globals.gui.time_scrubber.setMaximum(media_info[1]["max_seek_time"])
 
-                pixmap = await api.get_thumbnail(media_info[2])
-                if pixmap:
-                    globals.gui.update_cover_art(pixmap)
+                thumbnail = await api.get_thumbnail(media_info[2])
+                if thumbnail[0]:
+                    globals.gui.update_cover_art(thumbnail)
                 else:
                     globals.gui.update_cover_art()
                 globals.prev_state = cur_state
             if globals.blank_cover_art:
-                pixmap = await api.get_thumbnail(media_info[2])
-                if pixmap:
-                    globals.gui.update_cover_art(pixmap)
+                thumbnail = await api.get_thumbnail(media_info[2])
+                if thumbnail[0]:
+                    globals.gui.update_cover_art(thumbnail)
         else:
             globals.gui.time_scrubber.setValue(0)
             globals.prev_position = 0
