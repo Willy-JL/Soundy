@@ -13,14 +13,28 @@ async def update_loop():
         if media_info:
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
-                globals.gui.play_pause.set_state("playing")
+                globals.gui.play_pause.set_state(True)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
             elif media_info[0]["playback_status"] != 4:
                 globals.gui.time_scrubber.setValue(media_info[1]["position"])
-                globals.gui.play_pause.set_state("paused")
+                globals.gui.play_pause.set_state(False)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
+
+            if globals.shuffle_mode is None:
+                globals.shuffle_mode = media_info[0]["is_shuffle_active"]
+
+            if globals.repeat_mode is None:
+                globals.repeat_mode = media_info[0]["auto_repeat_mode"]
+
+            if media_info[0]["is_shuffle_active"] != globals.prev_shuffle:
+                globals.gui.shuffle.set_state(media_info[0]["is_shuffle_active"])
+                globals.prev_shuffle = media_info[0]["is_shuffle_active"]
+
+            if media_info[0]["auto_repeat_mode"] != globals.prev_repeat:
+                globals.gui.repeat.set_state(media_info[0]["auto_repeat_mode"])
+                globals.prev_repeat = media_info[0]["auto_repeat_mode"]
 
             cur_state = f'{media_info[1]["max_seek_time"]}{media_info[1]["min_seek_time"]}{media_info[2]["artist"]}{media_info[2]["is_spotify"]}{media_info[2]["title"]}'
 
@@ -43,7 +57,7 @@ async def update_loop():
                     globals.gui.update_cover_art(thumbnail)
         else:
             globals.gui.time_scrubber.setValue(0)
-            globals.gui.play_pause.set_state("paused")
+            globals.gui.play_pause.set_state(False)
             globals.prev_position = 0
             globals.paused = True
             globals.gui.update_cover_art()

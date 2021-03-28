@@ -38,10 +38,7 @@ async def get_media_info():
 async def play_pause(*args):
     current_session = await get_media_session()
     if current_session:
-        if globals.paused:
-            globals.gui.play_pause.set_state("playing")
-        else:
-            globals.gui.play_pause.set_state("paused")
+        globals.gui.play_pause.set_state(globals.paused)
         await current_session.try_toggle_play_pause_async()
 
 
@@ -59,17 +56,28 @@ async def skip_next(*args):
         await current_session.try_skip_next_async()
 
 
-async def set_shuffle(enabled: bool):
+@asyncSlot()
+async def set_shuffle(*args):
     current_session = await get_media_session()
     if current_session:
-        await current_session.try_change_shuffle_active_async(enabled)
+        globals.shuffle_mode = not globals.shuffle_mode
+        globals.gui.shuffle.set_state(globals.shuffle_mode)
+        await current_session.try_change_shuffle_active_async(globals.shuffle_mode)
 
 
-async def set_repeat(mode: int):
+@asyncSlot()
+async def set_repeat(*args):
     """0 = Disabled, 1 = Single, 2 = Queue"""
     current_session = await get_media_session()
     if current_session:
-        await current_session.try_change_auto_repeat_mode_async(mode)
+        if globals.repeat_mode == 0:
+            globals.repeat_mode = 2
+        elif globals.repeat_mode == 2:
+            globals.repeat_mode = 1
+        elif globals.repeat_mode == 1:
+            globals.repeat_mode = 0
+        globals.gui.repeat.set_state(globals.repeat_mode)
+        await current_session.try_change_auto_repeat_mode_async(globals.repeat_mode)
 
 
 async def seek(position: int):

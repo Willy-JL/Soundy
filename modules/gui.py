@@ -40,7 +40,7 @@ class MusicScrubber(QSlider):
 
 
 class MusicButton(QPushButton):
-    def __init__(self, parent, callback: FunctionType, font, size, default_state: str, buttons: dict):
+    def __init__(self, parent, callback: FunctionType, font, size, default_state, buttons: dict):
         super().__init__(parent)
         self.hovered = False
         self.buttons = buttons
@@ -150,12 +150,12 @@ class SoundyGUI(QMainWindow):
         self.spacer_left = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.grid_layout.addItem(self.spacer_left, 0, 0, 3, 1)
 
-        self.shuffle = MusicButton(self.info_section, print, globals.font_mdi_18, 20, "disabled", {
-            "enabled": {
+        self.shuffle = MusicButton(self.info_section, api.set_shuffle, globals.font_mdi_18, 20, False, {
+            True: {
                 True:  "󰒝",
                 False: "󰒝"
             },
-            "disabled": {
+            False: {
                 True:  "󰒞",
                 False: "󰒞"
             }
@@ -180,12 +180,12 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.skip_prev, 0, 2, 4, 1)
 
-        self.play_pause = MusicButton(self.info_section, api.play_pause, globals.font_mdi_38, 43, "paused", {
-            "playing": {
+        self.play_pause = MusicButton(self.info_section, api.play_pause, globals.font_mdi_38, 43, False, {
+            True: {
                 True:  "󰏥",
                 False: "󰏦"
             },
-            "paused": {
+            False: {
                 True:  "󰐌",
                 False: "󰐍"
             }
@@ -210,16 +210,16 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.skip_next, 0, 4, 4, 1)
 
-        self.repeat = MusicButton(self.info_section, print, globals.font_mdi_18, 20, "disabled", {
-            "queue": {
+        self.repeat = MusicButton(self.info_section, api.set_repeat, globals.font_mdi_18, 20, 0, {
+            2: {
                 True:  "󰑖",
                 False: "󰑖"
             },
-            "single": {
+            1: {
                 True:  "󰑘",
                 False: "󰑘"
             },
-            "disabled": {
+            0: {
                 True:  "󰑗",
                 False: "󰑗"
             }
