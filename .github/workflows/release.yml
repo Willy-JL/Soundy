@@ -1,0 +1,106 @@
+name: Build Release Binaries
+
+on:
+  release:
+    types: [created]
+
+jobs:
+
+  Build:
+
+    name: Build
+    runs-on: ubuntu-20.04
+
+    steps:
+
+      - name: Install zip
+        uses: montudor/action-zip@v0.1.1
+
+      - name: Clone Repo
+        uses: actions/checkout@v2
+
+      - name: Build Application
+        uses: Willy-JL/pyinstaller-action-windows@main
+        with:
+          path: ./
+
+      - name: Remove redundant libs
+        run: |
+          rm -rf dist/windows/Soundy/Include
+          rm -rf dist/windows/Soundy/api-ms-win-*
+          rm -rf dist/windows/Soundy/Qt5WebSockets.dll
+          rm -rf dist/windows/Soundy/Qt5Svg.dll
+          rm -rf dist/windows/Soundy/Qt5Quick.dll
+          rm -rf dist/windows/Soundy/Qt5QmlModels.dll
+          rm -rf dist/windows/Soundy/Qt5Qml.dll
+          rm -rf dist/windows/Soundy/Qt5Network.dll
+          rm -rf dist/windows/Soundy/Qt5DBus.dll
+          rm -rf dist/windows/Soundy/ucrtbase.dll
+
+      - name: Move libs to lib dir
+        run: |
+          mkdir dist/windows/Soundy/lib
+          mv dist/windows/Soundy/multidict dist/windows/Soundy/lib
+          mv dist/windows/Soundy/tcl8 dist/windows/Soundy/lib
+          mv dist/windows/Soundy/yarl dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_asyncio.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_ctypes.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_hashlib.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_overlapped.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundyeue.pyd dist/windows/F95CSoundy
+          mv dist/windows/Soundy/_socket.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_ssl.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_tkinter.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_win32sysloader.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/d3dcompiler_47.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libcrypto-1_1.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libEGL.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libffi-7.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libGLESv2.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libssl-1_1.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/MSVCP140.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/MSVCP140_1.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/opengl32sw.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/python3.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/pywintypes38.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/select.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/tcl86t.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/tk86t.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/unicodedata.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/VCRUNTIME140.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/win32api.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/win32event.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/win32wnet.pyd dist/windows/Soundy/lib
+
+      - name: Move python files to dist folder
+        run: |
+          mv Soundy.py dist/windows/Soundy
+          mv Soundy.sh dist/windows/Soundy
+          mv requirements_linux.txt dist/windows/Soundy
+          mv requirements.txt dist/windows/Soundy
+          mv update.py dist/windows/Soundy
+          mv update.exe dist/windows/Soundy
+          mv modules dist/windows/Soundy
+
+      - name: Purge old artifacts
+        uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          expire-in: 0
+
+      - name: Delete skipped workflow runs
+        uses: Willy-JL/delete-skipped-workflow-runs@main
+        with:
+          retain_days: 0
+          keep_minimum_runs: 0
+
+      - name: Zip Binaries
+        run: zip -qq -r SoundyV${GITHUB_REF:10}.zip *
+        working-directory: dist/windows/Soundy
+
+      - name: Upload Binaries
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'dist/windows/Soundy/SoundyV*.zip'

@@ -70,7 +70,7 @@ class SoundyGUI(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent, Qt.WindowFlags())
         self.can_drag = False
-        self.setWindowIcon(QIcon('resources/icon.png'))
+        self.setWindowIcon(QIcon('resources/icons/icon.png'))
         self.setObjectName(u"Soundy")
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -322,7 +322,7 @@ class SoundyGUI(QMainWindow):
             pixmap = thumbnail[0]
             globals.blank_cover_art = False
         else:
-            pixmap = QPixmap("resources/icon_small.png")
+            pixmap = QPixmap("resources/icons/icon_small.png")
             globals.blank_cover_art = True
         rounded = QPixmap(pixmap.size())
         rounded.fill(QColor("transparent"))
