@@ -39,8 +39,7 @@ async def update_loop():
             cur_state = f'{media_info[1]["max_seek_time"]}{media_info[1]["min_seek_time"]}{media_info[2]["artist"]}{media_info[2]["is_spotify"]}{media_info[2]["title"]}'
 
             if cur_state != globals.prev_state:
-                globals.gui.update_track_name(media_info[2]["title"])
-                globals.gui.update_artist_name(media_info[2]["artist"])
+                globals.gui.update_track_info(media_info[2]["title"], media_info[2]["artist"])
 
                 globals.gui.time_scrubber.setMinimum(media_info[1]["min_seek_time"])
                 globals.gui.time_scrubber.setMaximum(media_info[1]["max_seek_time"])
@@ -60,12 +59,13 @@ async def update_loop():
             globals.gui.play_pause.set_state(False)
             globals.prev_position = 0
             globals.paused = True
+            globals.gui.update_track_info()
             globals.gui.update_cover_art()
-        next_update = time.time() + 1
+        next_update = time.time() + 0.5
         while time.time() < next_update:
             if not globals.gui.time_scrubber.scrubbing and not globals.paused:
-                globals.gui.time_scrubber.setValue(globals.gui.time_scrubber.value() + 10)
-            await asyncio.sleep(0.01)
+                globals.gui.time_scrubber.setValue(globals.gui.time_scrubber.value() + 100)
+            await asyncio.sleep(0.1)
 
 """
 (

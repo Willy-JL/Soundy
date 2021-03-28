@@ -87,7 +87,6 @@ class SoundyGUI(QMainWindow):
         self.cover_art = QLabel(self)
         self.cover_art.setObjectName(u"cover_art")
         self.cover_art.setFixedSize(69, 69)
-        self.update_cover_art()
 
         self.main_grid.addWidget(self.cover_art, 0, 0, 1, 1)
 
@@ -263,8 +262,8 @@ class SoundyGUI(QMainWindow):
             self.restoreState(settings.value("windowState"))
 
         self.setWindowTitle("Soundy")
-        self.update_track_name("Soundy")
-        self.update_artist_name("By WillyJL")
+        self.update_track_info()
+        self.update_cover_art()
 
     def closeEvent(self, event):
         settings = QSettings("WillyJL", "Soundy")
@@ -339,25 +338,34 @@ class SoundyGUI(QMainWindow):
         else:
             self.update_style()
 
-    def update_track_name(self, title):
+    def update_track_info(self, title=None, artist=None):
+        if not title:
+            title = "Soundy"
+        if not artist:
+            artist = "By WillyJL"
+        text = f'{title}\n{artist}'
         title = "   " + title
+        artist = "   " + artist
+        tooltip = False
         if self.title.fontMetrics().boundingRect(title).width() > self.max_info_width:
+            tooltip = True
             cutoff = 1
             while self.title.fontMetrics().boundingRect(title[:-cutoff] + "...").width() > self.max_info_width:
                 cutoff += 1
             self.title.setText(title[:-cutoff] + "...")
         else:
             self.title.setText(title)
-
-    def update_artist_name(self, artist):
-        artist = "   " + artist
         if self.artist.fontMetrics().boundingRect(artist).width() > self.max_info_width:
+            tooltip = True
             cutoff = 1
             while self.artist.fontMetrics().boundingRect(artist[:-cutoff] + "...").width() > self.max_info_width:
                 cutoff += 1
             self.artist.setText(artist[:-cutoff] + "...")
         else:
             self.artist.setText(artist)
+        if not tooltip:
+            text = ""
+        self.setToolTip(text)
 
     def update_style(self, ground=None, accent=None):
         if ground:
