@@ -11,6 +11,10 @@ async def update_loop():
         # pprint(media_info)
 
         if media_info:
+            if globals.gui.isHidden():
+                globals.timeout = None
+                globals.gui.show()
+
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 if isinstance(media_info[1]["position"], int):
                     globals.gui.time_scrubber.setValue(media_info[1]["position"])
@@ -73,6 +77,13 @@ async def update_loop():
                 if thumbnail[0]:
                     globals.gui.update_cover_art(thumbnail)
         else:
+            if globals.timeout is None:
+                globals.timeout = 10
+            elif globals.timeout > 0:
+                globals.timeout -= 1
+            if globals.timeout == 0:
+                if not globals.gui.isHidden():
+                    globals.gui.hide()
             globals.gui.time_scrubber.setValue(0)
             globals.gui.play_pause.set_state(False)
             globals.prev_position = 0

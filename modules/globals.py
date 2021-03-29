@@ -1,3 +1,4 @@
+version = None
 singleton = None
 app = None
 loop = None
@@ -8,6 +9,7 @@ font_mdi_18 = None
 font_mdi_13 = None
 font_track = None
 font_artist = None
+timeout = None
 prev_state = None
 prev_position = None
 prev_shuffle = None
