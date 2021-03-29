@@ -20,7 +20,10 @@ async def update_loop():
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
             elif media_info[0]["playback_status"] != 4:
-                globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                if isinstance(media_info[1]["position"], int):
+                    globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                else:
+                    globals.gui.time_scrubber.setValue(0)
                 globals.gui.play_pause.set_state(False)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
