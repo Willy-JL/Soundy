@@ -12,7 +12,10 @@ async def update_loop():
 
         if media_info:
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
-                globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                if isinstance(media_info[1]["position"], int):
+                    globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                else:
+                    globals.gui.time_scrubber.setValue(0)
                 globals.gui.play_pause.set_state(True)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
@@ -29,11 +32,17 @@ async def update_loop():
                 globals.repeat_mode = media_info[0]["auto_repeat_mode"]
 
             if media_info[0]["is_shuffle_active"] != globals.prev_shuffle:
-                globals.gui.shuffle.set_state(media_info[0]["is_shuffle_active"])
+                if isinstance(media_info[0]["is_shuffle_active"], bool):
+                    globals.gui.shuffle.set_state(media_info[0]["is_shuffle_active"])
+                else:
+                    globals.gui.shuffle.set_state(False)
                 globals.prev_shuffle = media_info[0]["is_shuffle_active"]
 
             if media_info[0]["auto_repeat_mode"] != globals.prev_repeat:
-                globals.gui.repeat.set_state(media_info[0]["auto_repeat_mode"])
+                if isinstance(media_info[0]["auto_repeat_mode"], int) and media_info[0]["auto_repeat_mode"] in list(range(3)):
+                    globals.gui.repeat.set_state(media_info[0]["auto_repeat_mode"])
+                else:
+                    globals.gui.repeat.set_state(0)
                 globals.prev_repeat = media_info[0]["auto_repeat_mode"]
 
             cur_state = f'{media_info[1]["max_seek_time"]}{media_info[1]["min_seek_time"]}{media_info[2]["artist"]}{media_info[2]["is_spotify"]}{media_info[2]["title"]}'
