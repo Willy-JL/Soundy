@@ -256,11 +256,7 @@ class SoundyGUI(QMainWindow):
         self.update_cover_art()
 
     def closeEvent(self, event):
-        settings = QSettings("WillyJL", "Soundy")
-        settings.setValue("geometry", self.saveGeometry())
-        settings.setValue("windowState", self.saveState())
-        globals.loop.stop()
-        event.accept()
+        api.exit_handler(event)
 
     def mousePressEvent(self, event):
         self.old_pos = event.globalPos()
@@ -399,7 +395,7 @@ QPushButton {
 }
 
 QMenu::item {
-    padding: 2px 15px 2px 4px
+    padding: 2px 10px 2px 5px
 }
 
 QMenu::item:selected {
