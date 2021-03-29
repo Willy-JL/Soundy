@@ -29,10 +29,16 @@ async def update_loop():
                 globals.paused = True
 
             if globals.shuffle_mode is None:
-                globals.shuffle_mode = media_info[0]["is_shuffle_active"]
+                if isinstance(media_info[0]["is_shuffle_active"], bool):
+                    globals.shuffle_mode = media_info[0]["is_shuffle_active"]
+                else:
+                    globals.shuffle_mode = False
 
             if globals.repeat_mode is None:
-                globals.repeat_mode = media_info[0]["auto_repeat_mode"]
+                if isinstance(media_info[0]["auto_repeat_mode"], int) and media_info[0]["auto_repeat_mode"] in list(range(3)):
+                    globals.repeat_mode = media_info[0]["auto_repeat_mode"]
+                else:
+                    globals.repeat_mode = 0
 
             if media_info[0]["is_shuffle_active"] != globals.prev_shuffle:
                 if isinstance(media_info[0]["is_shuffle_active"], bool):
@@ -48,13 +54,13 @@ async def update_loop():
                     globals.gui.repeat.set_state(0)
                 globals.prev_repeat = media_info[0]["auto_repeat_mode"]
 
-            cur_state = f'{media_info[1]["max_seek_time"]}{media_info[1]["min_seek_time"]}{media_info[2]["artist"]}{media_info[2]["is_spotify"]}{media_info[2]["title"]}'
+            cur_state = f'{media_info[1].get("max_seek_time")}{media_info[1].get("min_seek_time")}{media_info[2].get("artist")}{media_info[2].get("is_spotify")}{media_info[2].get("title")}'
 
             if cur_state != globals.prev_state:
-                globals.gui.update_track_info(media_info[2]["title"], media_info[2]["artist"])
+                globals.gui.update_track_info(media_info[2].get("title"), media_info[2].get("artist"))
 
-                globals.gui.time_scrubber.setMinimum(media_info[1]["min_seek_time"])
-                globals.gui.time_scrubber.setMaximum(media_info[1]["max_seek_time"])
+                globals.gui.time_scrubber.setMinimum(media_info[1].get("min_seek_time") if isinstance(media_info[1].get("min_seek_time"), int) else 0)
+                globals.gui.time_scrubber.setMaximum(media_info[1].get("max_seek_time") if isinstance(media_info[1].get("max_seek_time"), int) else 600000)
 
                 thumbnail = await api.get_thumbnail(media_info[2])
                 if thumbnail[0]:
