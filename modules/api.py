@@ -46,6 +46,8 @@ async def play_pause(*args):
 async def skip_prev(*args):
     current_session = await get_media_session()
     if current_session:
+        if globals.repeat_mode == 1:
+            globals.repeat_mode = 2
         await current_session.try_skip_previous_async()
 
 
@@ -53,6 +55,8 @@ async def skip_prev(*args):
 async def skip_next(*args):
     current_session = await get_media_session()
     if current_session:
+        if globals.repeat_mode == 1:
+            globals.repeat_mode = 2
         await current_session.try_skip_next_async()
 
 
@@ -132,7 +136,7 @@ async def get_thumbnail(media_info: dict):
 
         binary.seek(0)
         color_thief = ColorThief(binary)
-        palette = color_thief.get_palette(color_count=6)
+        palette = color_thief.get_palette(color_count=2)
         colors = find_colors(palette)
 
         return QPixmap.fromImage(qimg), colors
