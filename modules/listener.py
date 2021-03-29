@@ -1,14 +1,12 @@
-# from pprint import pprint
 import asyncio
 import time
 
-from modules import api, globals
+from modules import globals, api
 
 
-async def update_loop():
+async def listener_loop():
     while True:
         media_info = await api.get_media_info()
-        # pprint(media_info)
 
         if media_info:
             if globals.gui.isHidden():
@@ -96,6 +94,7 @@ async def update_loop():
                 globals.gui.time_scrubber.setValue(globals.gui.time_scrubber.value() + 100)
             await asyncio.sleep(0.1)
 
+# Example response from api.get_media_info()
 """
 (
     {
