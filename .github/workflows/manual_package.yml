@@ -38,7 +38,6 @@ jobs:
           rm -rf dist/windows/Soundy/MSVCP140.dll
           rm -rf dist/windows/Soundy/MSVCP140_1.dll
           rm -rf dist/windows/Soundy/opengl32sw.dll
-          rm -rf dist/windows/Soundy/pyexpat.pyd
           rm -rf dist/windows/Soundy/Qt5DBus.dll
           rm -rf dist/windows/Soundy/Qt5Network.dll
           rm -rf dist/windows/Soundy/Qt5Qml.dll
@@ -57,6 +56,7 @@ jobs:
           mv dist/windows/Soundy/_overlapped.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_socket.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/libffi-7.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/pyexpat.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/python3.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/pywintypes38.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/Qt5Core.dll dist/windows/Soundy/lib
