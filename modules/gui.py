@@ -2,6 +2,7 @@ from types import FunctionType
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+import webbrowser
 import asyncio
 
 from modules import globals, api
@@ -134,16 +135,6 @@ class SoundyGUI(QMainWindow):
         self.time_scrubber_mask = self.time_scrubber_mask.subtracted(corner.subtracted(rounded))
         self.time_scrubber.setMask(self.time_scrubber_mask)
 
-        # self.time_scrubber_mask = QPixmap(181, 4)
-        # self.time_scrubber_mask.fill(QColor("transparent"))
-        # painter = QPainter(self.time_scrubber_mask)
-        # painter.setRenderHint(QPainter.Antialiasing)
-        # painter.setBrush(QColor("#FFFFFFFF"))
-        # painter.setPen(Qt.NoPen)
-        # painter.drawRoundedRect(-8, -8, 189, 12, 8, 8)
-        # painter.end()
-        # self.time_scrubber.setMask(self.time_scrubber_mask.mask())
-
         self.grid_layout.addWidget(self.time_scrubber, 3, 0, 1, 7)
 
         self.spacer_left = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -246,7 +237,6 @@ class SoundyGUI(QMainWindow):
         self.close_button.setGraphicsEffect(self.close_button_opacity)
 
         self.close_button.move(161, 4)
-        # self.grid_layout.addWidget(self.close_button, 0, 6, 3, 1)
 
 
         self.main_grid.addWidget(self.info_section, 0, 1, 1, 1)
@@ -340,9 +330,9 @@ class SoundyGUI(QMainWindow):
 
     def update_track_info(self, title=None, artist=None):
         if not title:
-            title = "Soundy"
+            title = f"Soundy v{globals.version}"
         if not artist:
-            artist = "By WillyJL"
+            artist = "By WillyJL" + (f" - Hiding in {int((globals.timeout + 1) / 2)}" if globals.timeout else "")
         text = f'{title}\n{artist}'
         title = "   " + title
         artist = "   " + artist
@@ -407,4 +397,40 @@ QLabel {
 QPushButton {
     color: """ + (accent if accent else "#868686") + """
 }
+
+QMenu::item {
+    padding: 2px 15px 2px 4px
+}
+
+QMenu::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1276EF, stop:1 #BA31EF);
+    color: rgb(255, 255, 255)
+}
 """)
+
+
+class SoundyTray(QSystemTrayIcon):
+    def __init__(self, parent=None):
+        self.icon = QIcon('resources/icons/icon.png')
+        QSystemTrayIcon.__init__(self, self.icon, parent)
+
+        # Context menu
+        self.menu = QMenu(parent)
+
+        # Watermark item
+        self.watermark = QAction(f"Soundy v{globals.version}")
+        self.watermark.setEnabled(False)
+        self.menu.addAction(self.watermark)
+
+        # Releases item
+        self.releases = QAction("See new updates")
+        self.releases.triggered.connect(lambda e=None: webbrowser.open('https://github.com/Willy-JL/soundy/releases', new=2))
+        self.menu.addAction(self.releases)
+
+        # Exit item
+        self.exit = QAction("Exit")
+        self.exit.triggered.connect(lambda e=None: globals.gui.close())
+        self.menu.addAction(self.exit)
+
+        # Apply context menu
+        self.setContextMenu(self.menu)

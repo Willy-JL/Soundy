@@ -1,28 +1,33 @@
+from modules import globals
+globals.version = "2.0"
+
 import sys
 
 class Logger(object):
     def __init__(self):
         self.console = sys.stdout
-        self.log = open("Soundy.log", "a")
 
     def write(self, message):
         self.console.write(message)
-        self.log.write(message)
+        with open("Soundy.log", "a") as log:
+            log.write(message)
 
     def flush(self):
         self.console.flush()
 
-    def __del__(self):
-        self.log.close()
-
 sys.stdout = Logger()
 sys.stderr = sys.stdout
+
+import datetime
+current = datetime.datetime.now()
+print(f'Soundy v{globals.version} starting at {"0" if current.day < 10 else ""}{current.day}/{"0" if current.month < 10 else ""}{current.month}/{current.year} - {"0" if current.hour < 10 else ""}{current.hour}:{"0" if current.minute < 10 else ""}{current.minute}:{"0" if current.second < 10 else ""}{current.second}')
+
 
 from PyQt5 import QtWidgets, QtGui
 from qasync import QEventLoop
 import asyncio
 
-from modules import callbacks, globals, gui, singleton
+from modules import gui, listener, singleton
 
 
 try:
@@ -35,7 +40,7 @@ if __name__ == '__main__':
 
     # Create App
     globals.app = QtWidgets.QApplication(sys.argv)
-    # globals.app.setQuitOnLastWindowClosed(False)
+    globals.app.setQuitOnLastWindowClosed(False)
 
     # Configure asyncio loop to work with PyQt
     globals.loop = QEventLoop(globals.app)
@@ -52,13 +57,16 @@ if __name__ == '__main__':
     QtGui.QFontDatabase.addApplicationFont("resources/fonts/Poppins-Light.ttf")
     globals.font_artist = QtGui.QFont('Poppins Light', 10, 300)
 
-    # Setup GUIs
+    # Setup GUI components
     globals.gui = gui.SoundyGUI()
+    globals.tray = gui.SoundyTray(globals.gui)
 
-    # Finally show GUI
+    # Finally show GUIs
+    globals.tray.show()
     globals.gui.show()
 
-    globals.loop.create_task(callbacks.update_loop())
+    # Start main listener loop
+    globals.loop.create_task(listener.listener_loop())
 
     # Set off loop
     with globals.loop:
