@@ -69,6 +69,7 @@ By default Soundy will hide after a few seconds without detecting media, but fea
 If you're a regular Discord user you might be interested in Soundy's Discord Rich Presence integration, which sports similar behavior to the main interface.
 
 <br />
+<br />
 
 
 
@@ -77,6 +78,7 @@ If you're a regular Discord user you might be interested in Soundy's Discord Ric
 ## Modular
 You can change your Soundy configuration very easily from the dedicated settings window, allowing you to toggle features such as its interface staying on top of other windows, hiding when no media is detected, toggling the Discord RPC integration and whether Soundy will start with Windows.
 
+<br />
 <br />
 
 
