@@ -431,7 +431,7 @@ class SoundySettings(QWidget):
         self.always_on_top = QCheckBox(self)
         self.always_on_top.setObjectName(u"always_on_top")
         self.always_on_top.setFont(globals.font_artist)
-        self.always_on_top.setText(" Always on top (requires restart)")
+        self.always_on_top.setText(" Always on top (requires app restart)")
 
         self.layout.addWidget(self.always_on_top, 0, 0, 1, 1, Qt.AlignLeft)
 
