@@ -32,7 +32,7 @@ async def listener_loop():
                     globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=False)
 
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
-                if isinstance(media_info[1]["position"], int):
+                if isinstance(media_info[1]["position"], int) and media_info[1]["position"] != 0:
                     globals.gui.time_scrubber.setValue(media_info[1]["position"])
                 else:
                     globals.gui.time_scrubber.setValue(0)
@@ -40,7 +40,7 @@ async def listener_loop():
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
             elif media_info[0]["playback_status"] != 4:
-                if isinstance(media_info[1]["position"], int):
+                if isinstance(media_info[1]["position"], int) and media_info[1]["position"] != 0:
                     globals.gui.time_scrubber.setValue(media_info[1]["position"])
                 else:
                     globals.gui.time_scrubber.setValue(0)
@@ -127,8 +127,8 @@ async def listener_loop():
                 presence["state"] = "No media detected"
 
         if globals.discord_rpc._discord_rpc is not None:
-            if not globals.paused:
-                presence["start_timestamp"] = int(time.time()) - int(globals.gui.time_scrubber.value() / 1000)
+            if not globals.paused and media_info and isinstance(media_info[1]["position"], int) and media_info[1]["position"] != 0:
+                presence["start_timestamp"] = int(time.time()) - int(media_info[1]["position"] / 1000)
             for item in presence:
                 should_update_presence = False
                 if globals.rpc_counter == 3: should_update_presence = True
