@@ -31,14 +31,11 @@ jobs:
           rm -rf dist/windows/Soundy/_elementtree.pyd
           rm -rf dist/windows/Soundy/_hashlib.pyd
           rm -rf dist/windows/Soundy/_queue.pyd
-          rm -rf dist/windows/Soundy/_ssl.pyd
           rm -rf dist/windows/Soundy/_win32sysloader.pyd
           rm -rf dist/windows/Soundy/api-ms-win-*
           rm -rf dist/windows/Soundy/d3dcompiler_47.dll
-          rm -rf dist/windows/Soundy/libcrypto-1_1.dll
           rm -rf dist/windows/Soundy/libEGL.dll
           rm -rf dist/windows/Soundy/libGLESv2.dll
-          rm -rf dist/windows/Soundy/libssl-1_1.dll
           rm -rf dist/windows/Soundy/MSVCP140.dll
           rm -rf dist/windows/Soundy/MSVCP140_1.dll
           rm -rf dist/windows/Soundy/opengl32sw.dll
@@ -59,7 +56,10 @@ jobs:
           mv dist/windows/Soundy/_ctypes.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_overlapped.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/_socket.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/_ssl.pyd dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libcrypto-1_1.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/libffi-7.dll dist/windows/Soundy/lib
+          mv dist/windows/Soundy/libssl-1_1.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/pyexpat.pyd dist/windows/Soundy/lib
           mv dist/windows/Soundy/python3.dll dist/windows/Soundy/lib
           mv dist/windows/Soundy/pywintypes38.dll dist/windows/Soundy/lib
