@@ -4,67 +4,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import webbrowser
 import asyncio
+import sys
 
 from modules import globals, api
-
-
-class MusicScrubber(QSlider):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.scrubbing = False
-        self.setOrientation(Qt.Horizontal)
-        self.setMaximum(600000)
-        self.setMinimum(0)
-
-    def mousePressEvent(self, event):
-        self.scrubbing = True
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
-
-    def mouseMoveEvent(self, event):
-        self.scrubbing = True
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-    
-    def mouseReleaseEvent(self, event):
-        self.scrubbing = False
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
-
-
-class MusicButton(QPushButton):
-    def __init__(self, parent, callback: FunctionType, font, size, default_state, buttons: dict):
-        super().__init__(parent)
-        self.hovered = False
-        self.buttons = buttons
-        self.state = default_state
-        self.setText(self.buttons[self.state][self.hovered])
-        self.setFont(font)
-        self.setFixedSize(size, size)
-        self.clicked.connect(callback)
-
-    def enterEvent(self, event):
-        self.hovered = True
-        self.update_text()
-
-    def leaveEvent(self, event):
-        self.hovered = False
-        self.update_text()
-
-    def set_state(self, state):
-        self.state = state
-        self.update_text()
-
-    def update_text(self):
-        self.setText(self.buttons[self.state][self.hovered]) 
 
 
 class SoundyGUI(QMainWindow):
@@ -73,7 +15,9 @@ class SoundyGUI(QMainWindow):
         self.can_drag = False
         self.setWindowIcon(QIcon('resources/icons/icon.png'))
         self.setObjectName(u"Soundy")
-        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        if globals.settings.value("alwaysOnTop", 1):
+            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setFixedSize(250, 69)
         self.max_info_width = 171
@@ -238,6 +182,19 @@ class SoundyGUI(QMainWindow):
 
         self.close_button.move(161, 4)
 
+        self.settings_button = MusicButton(self.info_section, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
+            "normal": {
+                True:  "󰒓",
+                False: "󰢻"
+            }
+        })
+        self.settings_button.setObjectName(u"settings_button")
+        self.settings_button_opacity = QGraphicsOpacityEffect(self.settings_button)
+        self.settings_button_opacity.setOpacity(0.0)
+        self.settings_button.setGraphicsEffect(self.settings_button_opacity)
+
+        self.settings_button.move(4, 4)
+
 
         self.main_grid.addWidget(self.info_section, 0, 1, 1, 1)
 
@@ -245,11 +202,10 @@ class SoundyGUI(QMainWindow):
 
         QMetaObject().connectSlotsByName(self)
 
-        settings = QSettings("WillyJL", "Soundy")
-        if settings.value("geometry"):
-            self.restoreGeometry(settings.value("geometry"))
-        if settings.value("windowState"):
-            self.restoreState(settings.value("windowState"))
+        if globals.settings.value("geometry"):
+            self.restoreGeometry(globals.settings.value("geometry"))
+        if globals.settings.value("windowState"):
+            self.restoreState(globals.settings.value("windowState"))
 
         self.setWindowTitle("Soundy")
         self.update_track_info()
@@ -279,14 +235,15 @@ class SoundyGUI(QMainWindow):
 
     async def toggle_controls(self, toggle):
         anim_list = [
-            [QPropertyAnimation(self.title_opacity,        b"opacity"), False],
-            [QPropertyAnimation(self.artist_opacity,       b"opacity"), False],
-            [QPropertyAnimation(self.shuffle_opacity,      b"opacity"), True ],
-            [QPropertyAnimation(self.skip_prev_opacity,    b"opacity"), True ],
-            [QPropertyAnimation(self.play_pause_opacity,   b"opacity"), True ],
-            [QPropertyAnimation(self.skip_next_opacity,    b"opacity"), True ],
-            [QPropertyAnimation(self.repeat_opacity,       b"opacity"), True ],
-            [QPropertyAnimation(self.close_button_opacity, b"opacity"), True ]
+            [QPropertyAnimation(self.title_opacity,           b"opacity"), False],
+            [QPropertyAnimation(self.artist_opacity,          b"opacity"), False],
+            [QPropertyAnimation(self.shuffle_opacity,         b"opacity"), True ],
+            [QPropertyAnimation(self.skip_prev_opacity,       b"opacity"), True ],
+            [QPropertyAnimation(self.play_pause_opacity,      b"opacity"), True ],
+            [QPropertyAnimation(self.skip_next_opacity,       b"opacity"), True ],
+            [QPropertyAnimation(self.repeat_opacity,          b"opacity"), True ],
+            [QPropertyAnimation(self.settings_button_opacity, b"opacity"), True ],
+            [QPropertyAnimation(self.close_button_opacity,    b"opacity"), True ]
         ]
         for anim in anim_list:
             anim[0].setDuration(75)
@@ -328,7 +285,7 @@ class SoundyGUI(QMainWindow):
         if not title:
             title = f"Soundy v{globals.version}"
         if not artist:
-            artist = "By WillyJL" + (f" - Hiding in {int((globals.timeout + 1) / 2)}" if globals.timeout else "")
+            artist = "By WillyJL" + (f" - Hiding in {int((globals.timeout + 1) / 2)}" if globals.settings.value("autoHide", 1) and globals.timeout else "")
         text = f'{title}\n{artist}'
         title = "   " + title
         artist = "   " + artist
@@ -402,6 +359,24 @@ QMenu::item:selected {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1276EF, stop:1 #BA31EF);
     color: rgb(255, 255, 255)
 }
+
+#SoundySettings {
+    background: #1E1E1E
+}
+
+QCheckBox::indicator {
+    border: 2px solid #8272EF;
+    border-radius: 6px;
+    background: #1E1E1E;
+    width: 16px;
+    height: 16px
+}
+
+QCheckBox::indicator:checked {
+    border-color: #8272EF;
+    background: #8272EF;
+    image: url(resources/icons/check.png)
+}
 """)
 
 
@@ -423,6 +398,11 @@ class SoundyTray(QSystemTrayIcon):
         self.releases.triggered.connect(lambda e=None: webbrowser.open('https://github.com/Willy-JL/soundy/releases', new=2))
         self.menu.addAction(self.releases)
 
+        # Settings item
+        self.settings = QAction("Settings")
+        self.settings.triggered.connect(lambda e=None: globals.settings_gui.show())
+        self.menu.addAction(self.settings)
+
         # Exit item
         self.exit = QAction("Exit")
         self.exit.triggered.connect(lambda e=None: globals.gui.close())
@@ -430,3 +410,163 @@ class SoundyTray(QSystemTrayIcon):
 
         # Apply context menu
         self.setContextMenu(self.menu)
+
+
+class SoundySettings(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowIcon(QIcon('resources/icons/icon.png'))
+
+        if not self.objectName():
+            self.setObjectName(u"SoundySettings")
+        self.setFixedSize(0, 0)
+        self.setWindowFlags(Qt.MSWindowsFixedSizeDialogHint)
+
+        self.layout = QGridLayout(self)
+        self.layout.setObjectName(u"layout")
+        self.layout.setContentsMargins(15, 15, 15, 15)
+        self.layout.setSpacing(15)
+
+
+        self.always_on_top = QCheckBox(self)
+        self.always_on_top.setObjectName(u"always_on_top")
+        self.always_on_top.setFont(globals.font_artist)
+        self.always_on_top.setText(" Always on top (requires restart)")
+
+        self.layout.addWidget(self.always_on_top, 0, 0, 1, 1, Qt.AlignLeft)
+
+        self.auto_hide = QCheckBox(self)
+        self.auto_hide.setObjectName(u"auto_hide")
+        self.auto_hide.setFont(globals.font_artist)
+        self.auto_hide.setText(" Auto hide without media detected")
+
+        self.layout.addWidget(self.auto_hide, 1, 0, 1, 1, Qt.AlignLeft)
+
+        self.discord_rpc = QCheckBox(self)
+        self.discord_rpc.setObjectName(u"discord_rpc")
+        self.discord_rpc.setFont(globals.font_artist)
+        self.discord_rpc.setText(" Discord Rich Presence integration")
+
+        self.layout.addWidget(self.discord_rpc, 2, 0, 1, 1, Qt.AlignLeft)
+
+        self.run_at_startup = QCheckBox(self)
+        self.run_at_startup.setObjectName(u"run_at_startup")
+        self.run_at_startup.setFont(globals.font_artist)
+        self.run_at_startup.setText(" Run Soundy at Windows startup")
+
+        self.layout.addWidget(self.run_at_startup, 3, 0, 1, 1, Qt.AlignLeft)
+
+
+        QMetaObject.connectSlotsByName(self)
+
+        self.setWindowTitle(f"Soundy Settings")
+
+    def showEvent(self, event):
+        try:
+            self.always_on_top.stateChanged.disconnect()
+        except TypeError:
+            pass
+        self.always_on_top.setChecked(bool(globals.settings.value("alwaysOnTop", 1)))
+        self.always_on_top.stateChanged.connect(self.set_always_on_top)
+
+        try:
+            self.auto_hide.stateChanged.disconnect()
+        except TypeError:
+            pass
+        self.auto_hide.setChecked(bool(globals.settings.value("autoHide", 1)))
+        self.auto_hide.stateChanged.connect(self.set_auto_hide)
+
+        try:
+            self.discord_rpc.stateChanged.disconnect()
+        except TypeError:
+            pass
+        self.discord_rpc.setChecked(bool(globals.settings.value("discordRPC", 0)))
+        self.discord_rpc.stateChanged.connect(self.set_discord_rpc)
+
+        try:
+            self.run_at_startup.stateChanged.disconnect()
+        except TypeError:
+            pass
+        self.run_at_startup.setChecked(QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings.NativeFormat).value("Soundy", "") == f'"{sys.executable}"')
+        self.run_at_startup.stateChanged.connect(self.set_run_at_startup)
+        event.accept()
+
+    def set_always_on_top(self, *args):
+        globals.settings.setValue("alwaysOnTop", int(self.always_on_top.isChecked()))
+
+    def set_auto_hide(self, *args):
+        globals.settings.setValue("autoHide", int(self.auto_hide.isChecked()))
+        globals.timeout = None
+
+    def set_discord_rpc(self, *args):
+        globals.settings.setValue("discordRPC", int(self.discord_rpc.isChecked()))
+        if self.discord_rpc.isChecked():
+            globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=False)
+        else:
+            globals.discord_rpc.shutdown()
+
+    def set_run_at_startup(self, *args):
+        startup_settings = QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings.NativeFormat)
+        if self.run_at_startup.isChecked():
+            startup_settings.setValue("Soundy", f'"{sys.executable}"')
+        else:
+            startup_settings.setValue("Soundy", "")
+
+
+class MusicButton(QPushButton):
+    def __init__(self, parent, callback: FunctionType, font, size, default_state, buttons: dict):
+        super().__init__(parent)
+        self.hovered = False
+        self.buttons = buttons
+        self.state = default_state
+        self.setText(self.buttons[self.state][self.hovered])
+        self.setFont(font)
+        self.setFixedSize(size, size)
+        self.clicked.connect(callback)
+
+    def enterEvent(self, event):
+        self.hovered = True
+        self.update_text()
+
+    def leaveEvent(self, event):
+        self.hovered = False
+        self.update_text()
+
+    def set_state(self, state):
+        self.state = state
+        self.update_text()
+
+    def update_text(self):
+        self.setText(self.buttons[self.state][self.hovered])
+
+
+class MusicScrubber(QSlider):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.scrubbing = False
+        self.setOrientation(Qt.Horizontal)
+        self.setMaximum(600000)
+        self.setMinimum(0)
+
+    def mousePressEvent(self, event):
+        self.scrubbing = True
+        event.accept()
+        x = event.pos().x()
+        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
+        self.setValue(value)
+        asyncio.get_event_loop().create_task(api.seek(value))
+
+    def mouseMoveEvent(self, event):
+        self.scrubbing = True
+        event.accept()
+        x = event.pos().x()
+        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
+        self.setValue(value)
+
+    def mouseReleaseEvent(self, event):
+        self.scrubbing = False
+        event.accept()
+        x = event.pos().x()
+        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
+        self.setValue(value)
+        asyncio.get_event_loop().create_task(api.seek(value))

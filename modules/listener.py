@@ -1,3 +1,4 @@
+import datetime
 import asyncio
 import time
 
@@ -8,10 +9,20 @@ async def listener_loop():
     while True:
         media_info = await api.get_media_info()
 
+        if globals.discord_rpc._discord_rpc is not None:
+            presence = {
+                'small_image_key': "icon",
+                'small_image_text': f"Soundy v{globals.version}"
+            }
+
+
+
         if media_info:
             if globals.gui.isHidden():
                 globals.timeout = None
                 globals.gui.show()
+                if globals.settings.value("discordRPC", 0) and globals.discord_rpc._discord_rpc is None:
+                    globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=False)
 
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 if isinstance(media_info[1]["position"], int):
@@ -29,6 +40,17 @@ async def listener_loop():
                 globals.gui.play_pause.set_state(False)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
+                if globals.discord_rpc._discord_rpc is not None:
+                    presence["large_image_key"] = "pause"
+                    presence["large_image_text"] = "*awkward cricket noises*"
+                    presence["details"] = media_info[2].get("title")
+                    presence["state"] = media_info[2].get("artist")
+            if media_info[0]["playback_status"] == 4:
+                if globals.discord_rpc._discord_rpc is not None:
+                    presence["large_image_key"] = "play"
+                    presence["large_image_text"] = "Currently vibing"
+                    presence["details"] = media_info[2].get("title")
+                    presence["state"] = media_info[2].get("artist")
 
             if globals.shuffle_mode is None:
                 if isinstance(media_info[0]["is_shuffle_active"], bool):
@@ -75,19 +97,43 @@ async def listener_loop():
                 if thumbnail[0]:
                     globals.gui.update_cover_art(thumbnail)
         else:
-            if globals.timeout is None:
-                globals.timeout = 10
-            elif globals.timeout > 0:
-                globals.timeout -= 1
-            if globals.timeout == 0:
-                if not globals.gui.isHidden():
-                    globals.gui.hide()
+            if globals.settings.value("autoHide", 1):
+                if globals.timeout is None:
+                    globals.timeout = 10
+                elif globals.timeout > 0:
+                    globals.timeout -= 1
+                if globals.timeout == 0:
+                    if not globals.gui.isHidden():
+                        globals.gui.hide()
+                        if globals.settings.value("discordRPC", 0) and globals.discord_rpc._discord_rpc is not None:
+                            globals.discord_rpc.shutdown()
             globals.gui.time_scrubber.setValue(0)
             globals.gui.play_pause.set_state(False)
             globals.prev_position = 0
             globals.paused = True
             globals.gui.update_track_info()
             globals.gui.update_cover_art()
+            if globals.discord_rpc._discord_rpc is not None:
+                presence["large_image_key"] = "pause"
+                presence["large_image_text"] = "No media app detected"
+                presence["details"] = "By WillyJL"
+                presence["state"] = ""
+
+        if globals.discord_rpc._discord_rpc is not None:
+            if not globals.paused:
+                start_time = datetime.datetime.fromtimestamp(int(time.time()) - int(globals.gui.time_scrubber.value() / 1000))
+                presence["start_timestamp"] = start_time.timestamp()
+            for item in presence:
+                should_update_presence = False
+                if not globals.prev_presence: should_update_presence = True
+                if not should_update_presence:
+                    if item != "start_timestamp" and globals.prev_presence[item] != presence[item]: should_update_presence = True
+                    if item == "start_timestamp" and globals.prev_presence[item] in range(presence[item]-1, presence[item]+2): should_update_presence = True
+                if should_update_presence:
+                    globals.discord_rpc.update_presence(**presence)
+                    globals.discord_rpc.update_connection()
+                    globals.discord_rpc.run_callbacks()
+
         next_update = time.time() + 0.5
         while time.time() < next_update:
             if not globals.gui.time_scrubber.scrubbing and not globals.paused:

@@ -23,11 +23,13 @@ current = datetime.datetime.now()
 print(f'Soundy v{globals.version} starting at {"0" if current.day < 10 else ""}{current.day}/{"0" if current.month < 10 else ""}{current.month}/{current.year} - {"0" if current.hour < 10 else ""}{current.hour}:{"0" if current.minute < 10 else ""}{current.minute}:{"0" if current.second < 10 else ""}{current.second}')
 
 
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 from qasync import QEventLoop
+import discord_rpc
 import asyncio
 
 from modules import gui, listener, singleton
+globals.discord_rpc = discord_rpc
 
 
 try:
@@ -58,12 +60,18 @@ if __name__ == '__main__':
     globals.font_artist = QtGui.QFont('Poppins Light', 10, 300)
 
     # Setup GUI components
+    globals.settings = QtCore.QSettings("WillyJL", "Soundy")
+    globals.settings_gui = gui.SoundySettings()
     globals.gui = gui.SoundyGUI()
     globals.tray = gui.SoundyTray(globals.gui)
 
     # Finally show GUIs
     globals.tray.show()
     globals.gui.show()
+
+    # Initialize discord rpc
+    if globals.settings.value("discordRPC", 0):
+        globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=True)
 
     # Start main listener loop
     globals.loop.create_task(listener.listener_loop())
