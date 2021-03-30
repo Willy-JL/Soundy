@@ -364,8 +364,12 @@ QMenu::item:selected {
     background: #1E1E1E
 }
 
+QCheckBox {
+    color: #868686
+}
+
 QCheckBox::indicator {
-    border: 2px solid #8272EF;
+    border: 2px solid #868686;
     border-radius: 6px;
     background: #1E1E1E;
     width: 16px;
