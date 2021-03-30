@@ -3,7 +3,6 @@ from winrt.windows.storage.streams import DataReader, Buffer, InputStreamOptions
 from winrt.windows.foundation import TimeSpan
 from PIL import Image, UnidentifiedImageError
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import QSettings
 from colorthief import ColorThief
 from qasync import asyncSlot
 from io import BytesIO
@@ -150,9 +149,8 @@ async def get_thumbnail(media_info: dict):
 @atexit.register
 def exit_handler(event=None):
     globals.tray.hide()
-    settings = QSettings("WillyJL", "Soundy")
-    settings.setValue("geometry", globals.gui.saveGeometry())
-    settings.setValue("windowState", globals.gui.saveState())
+    globals.settings.setValue("geometry", globals.gui.saveGeometry())
+    globals.settings.setValue("windowState", globals.gui.saveState())
     globals.loop.stop()
     if event is not None:
         event.accept()
