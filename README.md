@@ -11,7 +11,7 @@ A universal minimal media controller for Windows
 <img align="left" src=".github/images/Rockstar.png">
 
 ## Simple
-Soundy is designed to be simple but functional, implementing only the functions you need but doing it well. Controls are: play/pause, skip, shuffle, time scrubber.
+Soundy is designed to be simple but functional, implementing only the functions you need but doing it well. Controls are: play/pause, skip, shuffle, repeat, time scrubber.
 
 <br />
 
@@ -84,7 +84,7 @@ You can change your Soundy configuration very easily from the dedicated settings
 
 
 ## Convinced? Here's how to get Soundy!
-Since this program doesn't even connect to the internet there is no auto-updating, you will need to do that yourself. Soundy's tray icon has a link to the releases page though, so jus be sure to check there every so often.
+Since this program doesn't even connect to the internet there is no auto-updating, you will need to do that yourself. Soundy's tray icon has a link to the releases page though, so just be sure to check there every so often.
 
  - Head over to the [Releases](https://github.com/Willy-JL/soundy/releases) section
  - Grab the latest binaries (`SoundyVx.x.zip`)
