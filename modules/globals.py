@@ -6,6 +6,7 @@ gui = None
 settings = None
 settings_gui = None
 discord_rpc = None
+rpc_counter = None
 font_mdi_38 = None
 font_mdi_26 = None
 font_mdi_18 = None

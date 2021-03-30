@@ -424,7 +424,7 @@ class SoundySettings(QWidget):
 
         self.layout = QGridLayout(self)
         self.layout.setObjectName(u"layout")
-        self.layout.setContentsMargins(15, 15, 15, 15)
+        self.layout.setContentsMargins(18, 15, 18, 15)
         self.layout.setSpacing(15)
 
 
@@ -438,7 +438,7 @@ class SoundySettings(QWidget):
         self.auto_hide = QCheckBox(self)
         self.auto_hide.setObjectName(u"auto_hide")
         self.auto_hide.setFont(globals.font_artist)
-        self.auto_hide.setText(" Auto hide without media detected")
+        self.auto_hide.setText(" Auto hide when no media is detected")
 
         self.layout.addWidget(self.auto_hide, 1, 0, 1, 1, Qt.AlignLeft)
 

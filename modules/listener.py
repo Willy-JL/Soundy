@@ -1,4 +1,3 @@
-import datetime
 import asyncio
 import time
 
@@ -15,7 +14,15 @@ async def listener_loop():
                 'small_image_text': f"Soundy v{globals.version}"
             }
 
+        if globals.rpc_counter is None or globals.rpc_counter == 6:
+            globals.rpc_counter = 0
+        globals.rpc_counter += 1
 
+        if globals.gui.isHidden() and not globals.settings.value("autoHide", 1):
+            globals.timeout = None
+            globals.gui.show()
+            if globals.settings.value("discordRPC", 0) and globals.discord_rpc._discord_rpc is None:
+                globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=False)
 
         if media_info:
             if globals.gui.isHidden():
@@ -115,24 +122,28 @@ async def listener_loop():
             globals.gui.update_cover_art()
             if globals.discord_rpc._discord_rpc is not None:
                 presence["large_image_key"] = "pause"
-                presence["large_image_text"] = "No media app detected"
+                presence["large_image_text"] = "*awkward cricket noises*"
                 presence["details"] = "By WillyJL"
-                presence["state"] = ""
+                presence["state"] = "No media detected"
 
         if globals.discord_rpc._discord_rpc is not None:
             if not globals.paused:
-                start_time = datetime.datetime.fromtimestamp(int(time.time()) - int(globals.gui.time_scrubber.value() / 1000))
-                presence["start_timestamp"] = start_time.timestamp()
+                presence["start_timestamp"] = int(time.time()) - int(globals.gui.time_scrubber.value() / 1000)
             for item in presence:
                 should_update_presence = False
+                if globals.rpc_counter == 3: should_update_presence = True
                 if not globals.prev_presence: should_update_presence = True
                 if not should_update_presence:
-                    if item != "start_timestamp" and globals.prev_presence[item] != presence[item]: should_update_presence = True
-                    if item == "start_timestamp" and globals.prev_presence[item] in range(presence[item]-1, presence[item]+2): should_update_presence = True
+                    if item != "start_timestamp" and globals.prev_presence.get(item) != presence.get(item): should_update_presence = True
+                    if item == "start_timestamp" and globals.prev_presence.get(item) not in range(int(presence.get(item))-1, int(presence.get(item))+2): should_update_presence = True
                 if should_update_presence:
                     globals.discord_rpc.update_presence(**presence)
                     globals.discord_rpc.update_connection()
                     globals.discord_rpc.run_callbacks()
+                    break
+            globals.prev_presence = {}
+            for item in presence:
+                globals.prev_presence[item] = presence[item]
 
         next_update = time.time() + 0.5
         while time.time() < next_update:
@@ -143,17 +154,17 @@ async def listener_loop():
 # Example response from api.get_media_info()
 """
 (
-    {
+    0: {
         'auto_repeat_mode': 0,
         'is_shuffle_active': True,
         'playback_status': 4
     },
-    {
+    1: {
         'max_seek_time': 130370,
         'min_seek_time': 0,
         'position': 24249
     },
-    {
+    2: {
         'artist': 'Ghostface Playa',
         'is_spotify': True,
         'thumbnail': <_winrt_Windows_Storage_Streams.IRandomAccessStreamReference object at 0x000001AD6D5E2950>,
