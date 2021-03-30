@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     # Initialize discord rpc
     if globals.settings.value("discordRPC", 0):
-        globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=True)
+        globals.discord_rpc.initialize('826397574394413076', callbacks={}, log=False)
 
     # Start main listener loop
     globals.loop.create_task(listener.listener_loop())
