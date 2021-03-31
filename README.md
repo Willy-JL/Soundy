@@ -94,8 +94,8 @@ When an update is released you'll just have to download the new binaries and rep
 <br />
 
 ## Credits:
-[This amazing answer](https://stackoverflow.com/a/66037406) on Stack Overflow
-[Lofi](https://github.com/dvx/lofi) for the inspiration to make this
+ - [This amazing answer](https://stackoverflow.com/a/66037406) on Stack Overflow
+ - [Lofi](https://github.com/dvx/lofi) for the inspiration to make this
 
 
 <br />
