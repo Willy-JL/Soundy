@@ -65,7 +65,7 @@ By default Soundy will hide after a few seconds without detecting media, but fea
 <img align="left" src=".github/images/DiscordRPC.png">
 
 ## Spread the love
-If you're a regular Discord user you might be interested in Soundy's Discord Rich Presence integration, allowing you to proudly show off your favorite music no matter whether you player supports Discord. Similarly to the main interface, it will hide when no media is detected.
+Soundy's Discord Rich Presence integration allows you to proudly show off your favorite music no matter whether your player supports Discord. Similarly to the main interface, it will hide when no media is detected.
 
 <br />
 
@@ -95,6 +95,7 @@ When an update is released you'll just have to download the new binaries and rep
 
 ## Credits:
 [This amazing answer](https://stackoverflow.com/a/66037406) on Stack Overflow
+[Lofi](https://github.com/dvx/lofi) for the inspiration to make this
 
 
 <br />
