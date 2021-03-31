@@ -38,7 +38,7 @@ Soundy features a clean and minimal interface that adapts its colors based on th
 <img align="right" src=".github/images/Boss.png">
 
 ## Streamers rejoice
-By default Soundy stays always on top of other windows, giving you (and your potential audience) all the needed info with a quick glance.
+By default Soundy stays always on top of other windows, giving you (and your potential audience) all the needed info with a quick glance. No more "what's the song?" in chat.
 
 <br />
 
@@ -47,9 +47,8 @@ By default Soundy stays always on top of other windows, giving you (and your pot
 <img align="left" src=".github/images/MaskOff.png">
 
 ## Bloat free
-Soundy only interacts with the Windows internal API, meaning that you don't need any form of premium account or login.
+Soundy only interacts with the Windows internal API, meaning that you don't need any form of login or premium account. It doesn't even connect to the internet, so rate limits are not a thing.
 
-<br />
 <br />
 
 
@@ -57,7 +56,7 @@ Soundy only interacts with the Windows internal API, meaning that you don't need
 <img align="right" src=".github/images/TrayIcon.png">
 
 ## Always at arm's reach
-By default Soundy will hide after a few seconds without detecting media, but fear not, as its tray icon is always there for you.
+By default Soundy will hide after a few seconds without detecting media, but fear not, as its tray icon is always there for you. Here you have a link to the releases section, where you can update Soundy, and a handy settings shortcut.
 
 <br />
 
@@ -66,9 +65,8 @@ By default Soundy will hide after a few seconds without detecting media, but fea
 <img align="left" src=".github/images/DiscordRPC.png">
 
 ## Spread the love
-If you're a regular Discord user you might be interested in Soundy's Discord Rich Presence integration, which sports similar behavior to the main interface.
+If you're a regular Discord user you might be interested in Soundy's Discord Rich Presence integration, allowing you to proudly show off your favorite music no matter whether you player supports Discord. Similarly to the main interface, it will hide when no media is detected.
 
-<br />
 <br />
 
 
@@ -78,7 +76,6 @@ If you're a regular Discord user you might be interested in Soundy's Discord Ric
 ## Modular
 You can change your Soundy configuration very easily from the dedicated settings window, allowing you to toggle features such as its interface staying on top of other windows, hiding when no media is detected, toggling the Discord RPC integration and whether Soundy will start with Windows.
 
-<br />
 <br />
 
 
