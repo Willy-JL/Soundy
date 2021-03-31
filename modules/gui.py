@@ -361,24 +361,24 @@ QMenu::item:selected {
 }
 
 #SoundySettings {
-    background: #1E1E1E
+    background: """ + (ground if ground else "#1E1E1E") + """
 }
 
 QCheckBox {
-    color: #868686
+    color: """ + (accent if accent else "#868686") + """
 }
 
 QCheckBox::indicator {
-    border: 2px solid #868686;
+    border: 2px solid """ + (accent if accent else "#868686") + """;
     border-radius: 6px;
-    background: #1E1E1E;
+    background: """ + (ground if ground else "#1E1E1E") + """;
     width: 16px;
     height: 16px
 }
 
 QCheckBox::indicator:checked {
-    border-color: #8272EF;
-    background: #8272EF;
+    border-color: """ + (accent if accent else "#868686") + """;
+    background: """ + (accent if accent else "#868686") + """;
     image: url(resources/icons/check.png)
 }
 """)
