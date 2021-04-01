@@ -95,6 +95,7 @@ class MarqueeLabel(QLabel):
                     self.label_x = self.width()
                 self.repaint()
                 await asyncio.sleep(0.004)
+            self.repaint()
 
     def paintEvent(self, event):
         painter = QPainter(self)
