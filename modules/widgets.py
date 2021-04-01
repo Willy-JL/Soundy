@@ -80,7 +80,6 @@ class MarqueeLabel(QLabel):
         self.scrolling = False
 
     async def marquee(self):
-        # label_width = QFontMetrics(self.font()).width(self.text())
         label_width = self.fontMetrics().boundingRect(self.text()).width()
         if label_width > globals.gui.max_info_width:
             self.label_x = -1

@@ -1,5 +1,5 @@
 from modules import globals
-globals.version = "2.0"
+globals.version = "2.1"
 
 import sys
 
