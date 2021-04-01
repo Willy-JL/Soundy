@@ -19,7 +19,7 @@ class SoundyGUI(QMainWindow):
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setFixedSize(250, 69)
-        self.max_info_width = 171
+        self.max_info_width = 169
 
         self.main = QWidget(self)
         self.main.setObjectName(u"main")
@@ -41,12 +41,12 @@ class SoundyGUI(QMainWindow):
         self.info_section.setFrameShadow(QFrame.Raised)
         self.grid_layout = QGridLayout(self.info_section)
         self.grid_layout.setObjectName(u"grid_layout")
-        self.grid_layout.setVerticalSpacing(3)
+        self.grid_layout.setVerticalSpacing(0)
         self.grid_layout.setHorizontalSpacing(0)
         self.grid_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.spacer_top = QSpacerItem(0, 8, QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.grid_layout.addItem(self.spacer_top, 0, 0, 1, 7)
+        # self.spacer_top = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        # self.grid_layout.addItem(self.spacer_top, 0, 0, 1, 7)
 
         self.title = widgets.MarqueeLabel(self.info_section)
         self.title.setObjectName(u"title")
@@ -55,7 +55,9 @@ class SoundyGUI(QMainWindow):
         self.title_opacity.setOpacity(1.0)
         self.title.setGraphicsEffect(self.title_opacity)
 
-        self.grid_layout.addWidget(self.title, 1, 0, 1, 7)
+        # self.grid_layout.addWidget(self.title, 1, 0, 1, 7)
+        self.title.setMinimumWidth(181)
+        self.title.move(0, 4)
 
         self.artist = widgets.MarqueeLabel(self.info_section)
         self.artist.setObjectName(u"artist")
@@ -64,7 +66,9 @@ class SoundyGUI(QMainWindow):
         self.artist_opacity.setOpacity(1.0)
         self.artist.setGraphicsEffect(self.artist_opacity)
 
-        self.grid_layout.addWidget(self.artist, 2, 0, 1, 7)
+        # self.grid_layout.addWidget(self.artist, 2, 0, 1, 7)
+        self.artist.setMinimumWidth(181)
+        self.artist.move(0, 28)
 
         self.time_scrubber = widgets.MusicScrubber(self.info_section)
         self.time_scrubber.setObjectName(u"time_scrubber")
@@ -341,7 +345,7 @@ class SoundyGUI(QMainWindow):
 }
 
 #fade_right {
-    background: qlineargradient(x1:0.8, y1:0, x2:0.969, y2:0, stop:0 #00""" + (ground if ground else "#1E1E1E")[1:] + """, stop:1 #FF""" + (ground if ground else "#1E1E1E")[1:] + """);
+    background: qlineargradient(x1:0.89, y1:0, x2:0.99, y2:0, stop:0 #00""" + (ground if ground else "#1E1E1E")[1:] + """, stop:1 #FF""" + (ground if ground else "#1E1E1E")[1:] + """);
     margin-bottom: 4px;
     border-radius: 5px
 }
