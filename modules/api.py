@@ -149,9 +149,12 @@ async def get_thumbnail(media_info: dict):
 
 @atexit.register
 def exit_handler(event=None):
-    globals.tray.hide()
-    globals.settings.setValue("geometry", globals.gui.saveGeometry())
-    globals.settings.setValue("windowState", globals.gui.saveState())
-    globals.loop.stop()
+    if globals.tray:
+        globals.tray.hide()
+    if globals.settings and globals.gui:
+        globals.settings.setValue("geometry", globals.gui.saveGeometry())
+        globals.settings.setValue("windowState", globals.gui.saveState())
+    if globals.loop:
+        globals.loop.stop()
     if event is not None:
         event.accept()
