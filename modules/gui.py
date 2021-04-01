@@ -68,7 +68,7 @@ class SoundyGUI(QMainWindow):
 
         # self.grid_layout.addWidget(self.artist, 2, 0, 1, 7)
         self.artist.setMinimumWidth(181)
-        self.artist.move(0, 28)
+        self.artist.move(0, 27)
 
         self.time_scrubber = widgets.MusicScrubber(self.info_section)
         self.time_scrubber.setObjectName(u"time_scrubber")
@@ -186,7 +186,7 @@ class SoundyGUI(QMainWindow):
         self.close_button_opacity.setOpacity(0.0)
         self.close_button.setGraphicsEffect(self.close_button_opacity)
 
-        self.close_button.move(161, 4)
+        self.close_button.move(159, 6)
 
         self.settings_button = widgets.MusicButton(self.info_section, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
             "normal": {
@@ -199,7 +199,7 @@ class SoundyGUI(QMainWindow):
         self.settings_button_opacity.setOpacity(0.0)
         self.settings_button.setGraphicsEffect(self.settings_button_opacity)
 
-        self.settings_button.move(4, 4)
+        self.settings_button.move(6, 6)
 
 
         self.main_grid.addWidget(self.info_section, 0, 1, 1, 1)
@@ -457,7 +457,7 @@ class SoundySettings(QWidget):
 
         self.layout = QGridLayout(self)
         self.layout.setObjectName(u"layout")
-        self.layout.setContentsMargins(18, 15, 18, 15)
+        self.layout.setContentsMargins(18, 16, 18, 16)
         self.layout.setSpacing(15)
 
 
@@ -488,6 +488,13 @@ class SoundySettings(QWidget):
         self.run_at_startup.setText(" Run Soundy at Windows startup")
 
         self.layout.addWidget(self.run_at_startup, 3, 0, 1, 1, Qt.AlignLeft)
+
+        self.scrolling_text = QCheckBox(self)
+        self.scrolling_text.setObjectName(u"scrolling_text")
+        self.scrolling_text.setFont(globals.font_artist)
+        self.scrolling_text.setText(" Allow scrolling text for long names")
+
+        self.layout.addWidget(self.scrolling_text, 4, 0, 1, 1, Qt.AlignLeft)
 
 
         QMetaObject.connectSlotsByName(self)
@@ -522,6 +529,14 @@ class SoundySettings(QWidget):
             pass
         self.run_at_startup.setChecked(QSettings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings.NativeFormat).value("Soundy", "") == f'"{sys.executable}"')
         self.run_at_startup.stateChanged.connect(self.set_run_at_startup)
+
+        try:
+            self.scrolling_text.stateChanged.disconnect()
+        except TypeError:
+            pass
+        self.scrolling_text.setChecked(bool(globals.settings.value("scrollingText", 1)))
+        self.scrolling_text.stateChanged.connect(self.set_scrolling_text)
+
         event.accept()
 
     def set_always_on_top(self, *args):
@@ -545,11 +560,17 @@ class SoundySettings(QWidget):
         else:
             startup_settings.setValue("Soundy", "")
 
+    def set_scrolling_text(self, *args):
+        globals.settings.setValue("scrollingText", int(self.scrolling_text.isChecked()))
+        globals.gui.title.reset()
+        globals.gui.artist.reset()
+
 
 async def label_loop():
     while True:
-        title_task = globals.loop.create_task(globals.gui.title.marquee())
-        artist_task = globals.loop.create_task(globals.gui.title.marquee())
-        while not title_task.done() and not artist_task.done():
-            await asyncio.sleep(1)
+        if globals.settings.value("scrollingText", 1):
+            title_task = globals.loop.create_task(globals.gui.title.marquee())
+            artist_task = globals.loop.create_task(globals.gui.title.marquee())
+            while not title_task.done() and not artist_task.done():
+                await asyncio.sleep(1)
         await asyncio.sleep(6)
