@@ -90,11 +90,11 @@ class MarqueeLabel(QLabel):
                     self.scrolling = False
                     break
                 elif self.label_x > -label_width:
-                    self.label_x -= 0.25
+                    self.label_x -= 1
                 else:
                     self.label_x = self.width()
                 self.repaint()
-                await asyncio.sleep(0.004)
+                await asyncio.sleep(0.02)
             self.repaint()
 
     def paintEvent(self, event):
