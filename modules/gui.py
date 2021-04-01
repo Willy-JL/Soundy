@@ -1,4 +1,3 @@
-from types import FunctionType
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -6,7 +5,7 @@ import webbrowser
 import asyncio
 import sys
 
-from modules import globals, api
+from modules import globals, api, widgets
 
 
 class SoundyGUI(QMainWindow):
@@ -49,7 +48,7 @@ class SoundyGUI(QMainWindow):
         self.spacer_top = QSpacerItem(0, 8, QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.grid_layout.addItem(self.spacer_top, 0, 0, 1, 7)
 
-        self.title = QLabel(self.info_section)
+        self.title = widgets.MarqueeLabel(self.info_section)
         self.title.setObjectName(u"title")
         self.title.setFont(globals.font_track)
         self.title_opacity = QGraphicsOpacityEffect(self.title)
@@ -58,7 +57,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.title, 1, 0, 1, 7)
 
-        self.artist = QLabel(self.info_section)
+        self.artist = widgets.MarqueeLabel(self.info_section)
         self.artist.setObjectName(u"artist")
         self.artist.setFont(globals.font_artist)
         self.artist_opacity = QGraphicsOpacityEffect(self.artist)
@@ -67,7 +66,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.artist, 2, 0, 1, 7)
 
-        self.time_scrubber = MusicScrubber(self.info_section)
+        self.time_scrubber = widgets.MusicScrubber(self.info_section)
         self.time_scrubber.setObjectName(u"time_scrubber")
         width = 181
         height = 8
@@ -78,13 +77,16 @@ class SoundyGUI(QMainWindow):
         corner = QRegion(width-radius_br, height-radius_br, radius_br, radius_br, QRegion.Rectangle)
         self.time_scrubber_mask = self.time_scrubber_mask.subtracted(corner.subtracted(rounded))
         self.time_scrubber.setMask(self.time_scrubber_mask)
+        self.time_scrubber_opacity = QGraphicsOpacityEffect(self.time_scrubber)
+        self.time_scrubber_opacity.setOpacity(1.0)
+        self.time_scrubber.setGraphicsEffect(self.time_scrubber_opacity)
 
         self.grid_layout.addWidget(self.time_scrubber, 3, 0, 1, 7)
 
         self.spacer_left = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.grid_layout.addItem(self.spacer_left, 0, 0, 3, 1)
 
-        self.shuffle = MusicButton(self.info_section, api.set_shuffle, globals.font_mdi_18, 20, False, {
+        self.shuffle = widgets.MusicButton(self.info_section, api.set_shuffle, globals.font_mdi_18, 20, False, {
             True: {
                 True:  "󰒝",
                 False: "󰒝"
@@ -101,7 +103,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.shuffle, 0, 1, 4, 1)
 
-        self.skip_prev = MusicButton(self.info_section, api.skip_prev, globals.font_mdi_26, 30, "normal", {
+        self.skip_prev = widgets.MusicButton(self.info_section, api.skip_prev, globals.font_mdi_26, 30, "normal", {
             "normal": {
                 True:  "󰒮",
                 False: "󰼨"
@@ -114,7 +116,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.skip_prev, 0, 2, 4, 1)
 
-        self.play_pause = MusicButton(self.info_section, api.play_pause, globals.font_mdi_38, 43, False, {
+        self.play_pause = widgets.MusicButton(self.info_section, api.play_pause, globals.font_mdi_38, 43, False, {
             True: {
                 True:  "󰏥",
                 False: "󰏦"
@@ -131,7 +133,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.play_pause, 0, 3, 4, 1)
 
-        self.skip_next = MusicButton(self.info_section, api.skip_next, globals.font_mdi_26, 30, "normal", {
+        self.skip_next = widgets.MusicButton(self.info_section, api.skip_next, globals.font_mdi_26, 30, "normal", {
             "normal": {
                 True:  "󰒭",
                 False: "󰼧"
@@ -144,7 +146,7 @@ class SoundyGUI(QMainWindow):
 
         self.grid_layout.addWidget(self.skip_next, 0, 4, 4, 1)
 
-        self.repeat = MusicButton(self.info_section, api.set_repeat, globals.font_mdi_18, 20, 0, {
+        self.repeat = widgets.MusicButton(self.info_section, api.set_repeat, globals.font_mdi_18, 20, 0, {
             2: {
                 True:  "󰑖",
                 False: "󰑖"
@@ -169,7 +171,7 @@ class SoundyGUI(QMainWindow):
         self.grid_layout.addItem(self.spacer_right, 0, 6, 3, 1)
 
 
-        self.close_button = MusicButton(self.info_section, lambda: globals.gui.close(), globals.font_mdi_13, 15, "normal", {
+        self.close_button = widgets.MusicButton(self.info_section, lambda: globals.gui.close(), globals.font_mdi_13, 15, "normal", {
             "normal": {
                 True:  "󰅙",
                 False: "󰅚"
@@ -182,7 +184,7 @@ class SoundyGUI(QMainWindow):
 
         self.close_button.move(161, 4)
 
-        self.settings_button = MusicButton(self.info_section, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
+        self.settings_button = widgets.MusicButton(self.info_section, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
             "normal": {
                 True:  "󰒓",
                 False: "󰢻"
@@ -197,6 +199,32 @@ class SoundyGUI(QMainWindow):
 
 
         self.main_grid.addWidget(self.info_section, 0, 1, 1, 1)
+
+
+        self.fade_left = QFrame(self.main)
+        self.fade_left.setObjectName(u"fade_left")
+        self.fade_left.setMinimumSize(QSize(0, 0))
+        self.fade_left.setFrameShape(QFrame.NoFrame)
+        self.fade_left.setFrameShadow(QFrame.Raised)
+        self.fade_left.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.fade_left_opacity = QGraphicsOpacityEffect(self.fade_left)
+        self.fade_left_opacity.setOpacity(1.0)
+        self.fade_left.setGraphicsEffect(self.fade_left_opacity)
+
+        self.main_grid.addWidget(self.fade_left, 0, 1, 1, 1)
+
+        self.fade_right = QFrame(self.main)
+        self.fade_right.setObjectName(u"fade_right")
+        self.fade_right.setMinimumSize(QSize(0, 0))
+        self.fade_right.setFrameShape(QFrame.NoFrame)
+        self.fade_right.setFrameShadow(QFrame.Raised)
+        self.fade_right.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.fade_right_opacity = QGraphicsOpacityEffect(self.fade_right)
+        self.fade_right_opacity.setOpacity(1.0)
+        self.fade_right.setGraphicsEffect(self.fade_right_opacity)
+
+        self.main_grid.addWidget(self.fade_right, 0, 1, 1, 1)
+
 
         self.setCentralWidget(self.main)
 
@@ -237,6 +265,8 @@ class SoundyGUI(QMainWindow):
         anim_list = [
             [QPropertyAnimation(self.title_opacity,           b"opacity"), False],
             [QPropertyAnimation(self.artist_opacity,          b"opacity"), False],
+            [QPropertyAnimation(self.fade_left_opacity,       b"opacity"), False],
+            [QPropertyAnimation(self.fade_right_opacity,      b"opacity"), False],
             [QPropertyAnimation(self.shuffle_opacity,         b"opacity"), True ],
             [QPropertyAnimation(self.skip_prev_opacity,       b"opacity"), True ],
             [QPropertyAnimation(self.play_pause_opacity,      b"opacity"), True ],
@@ -281,43 +311,38 @@ class SoundyGUI(QMainWindow):
         else:
             self.update_style()
 
-    def update_track_info(self, title=None, artist=None):
-        if not title:
+    def update_track_info(self, title="", artist=""):
+        if not title and not artist:
             title = f"Soundy v{globals.version}"
-        if not artist:
-            artist = "By WillyJL" + (f" - Hiding in {int((globals.timeout + 1) / 2)}" if globals.settings.value("autoHide", 1) and globals.timeout else "")
-        text = f'{title}\n{artist}'
+            artist = "By WillyJL" + (f" - Hiding in {globals.timeout}" if globals.settings.value("autoHide", 1) and globals.timeout else "")
         title = "   " + title
         artist = "   " + artist
-        tooltip = False
-        if self.title.fontMetrics().boundingRect(title).width() > self.max_info_width:
-            tooltip = True
-            cutoff = 1
-            while self.title.fontMetrics().boundingRect(title[:-cutoff] + "...").width() > self.max_info_width:
-                cutoff += 1
-            self.title.setText(title[:-cutoff] + "...")
-        else:
-            self.title.setText(title)
-        if self.artist.fontMetrics().boundingRect(artist).width() > self.max_info_width:
-            tooltip = True
-            cutoff = 1
-            while self.artist.fontMetrics().boundingRect(artist[:-cutoff] + "...").width() > self.max_info_width:
-                cutoff += 1
-            self.artist.setText(artist[:-cutoff] + "...")
-        else:
-            self.artist.setText(artist)
-        if not tooltip:
-            text = ""
-        self.setToolTip(text)
+        self.title.setText(title)
+        self.title.reset()
+        self.artist.setText(artist)
+        self.artist.reset()
 
     def update_style(self, ground=None, accent=None):
         if ground:
             ground = '#%02x%02x%02x' % ground[0]
         if accent:
             accent = '#%02x%02x%02x' % accent[0]
+        self.title.setColor(accent if accent else "#868686")
+        self.artist.setColor(accent if accent else "#868686")
         globals.app.setStyleSheet("""
 #main {
     background: """ + (ground if ground else "#1E1E1E") + """;
+    border-radius: 5px
+}
+
+#fade_left {
+    background: qlineargradient(x1:0, y1:0, x2:0.071, y2:0, stop:0 #FF""" + (ground if ground else "#1E1E1E")[1:] + """, stop:1 #00""" + (ground if ground else "#1E1E1E")[1:] + """);
+    margin-bottom: 4px
+}
+
+#fade_right {
+    background: qlineargradient(x1:0.8, y1:0, x2:0.969, y2:0, stop:0 #00""" + (ground if ground else "#1E1E1E")[1:] + """, stop:1 #FF""" + (ground if ground else "#1E1E1E")[1:] + """);
+    margin-bottom: 4px;
     border-radius: 5px
 }
 
@@ -517,60 +542,10 @@ class SoundySettings(QWidget):
             startup_settings.setValue("Soundy", "")
 
 
-class MusicButton(QPushButton):
-    def __init__(self, parent, callback: FunctionType, font, size, default_state, buttons: dict):
-        super().__init__(parent)
-        self.hovered = False
-        self.buttons = buttons
-        self.state = default_state
-        self.setText(self.buttons[self.state][self.hovered])
-        self.setFont(font)
-        self.setFixedSize(size, size)
-        self.clicked.connect(callback)
-
-    def enterEvent(self, event):
-        self.hovered = True
-        self.update_text()
-
-    def leaveEvent(self, event):
-        self.hovered = False
-        self.update_text()
-
-    def set_state(self, state):
-        self.state = state
-        self.update_text()
-
-    def update_text(self):
-        self.setText(self.buttons[self.state][self.hovered])
-
-
-class MusicScrubber(QSlider):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.scrubbing = False
-        self.setOrientation(Qt.Horizontal)
-        self.setMaximum(600000)
-        self.setMinimum(0)
-
-    def mousePressEvent(self, event):
-        self.scrubbing = True
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
-
-    def mouseMoveEvent(self, event):
-        self.scrubbing = True
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-
-    def mouseReleaseEvent(self, event):
-        self.scrubbing = False
-        event.accept()
-        x = event.pos().x()
-        value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
-        self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
+async def label_loop():
+    while True:
+        title_task = globals.loop.create_task(globals.gui.title.marquee())
+        artist_task = globals.loop.create_task(globals.gui.title.marquee())
+        while not title_task.done() and not artist_task.done():
+            await asyncio.sleep(1)
+        await asyncio.sleep(6)
