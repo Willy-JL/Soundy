@@ -12,8 +12,9 @@ from modules import globals
 
 
 async def get_media_session():
-    sessions = await MediaManager.request_async()
-    return sessions.get_current_session()
+    if not globals.sessions:
+        globals.sessions = await MediaManager.request_async()
+    return globals.sessions.get_current_session()
 
 
 async def get_media_info():
