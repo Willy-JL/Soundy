@@ -67,8 +67,8 @@ class MusicScrubber(QSlider):
 
 
 class MarqueeLabel(QLabel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.label_x = 0
         self.scrolling = False
 
