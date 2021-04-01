@@ -1,10 +1,11 @@
 import asyncio
 import time
 
-from modules import globals, api
+from modules import globals, api, gui
 
 
 async def listener_loop():
+    globals.loop.create_task(gui.label_loop())
     while True:
         media_info = await api.get_media_info()
 
@@ -13,10 +14,6 @@ async def listener_loop():
                 'small_image_key': "icon",
                 'small_image_text': f"Soundy v{globals.version}"
             }
-
-        if globals.rpc_counter is None or globals.rpc_counter == 6:
-            globals.rpc_counter = 0
-        globals.rpc_counter += 1
 
         if globals.gui.isHidden() and not globals.settings.value("autoHide", 1):
             globals.timeout = None
@@ -34,16 +31,20 @@ async def listener_loop():
             if not globals.gui.time_scrubber.scrubbing and media_info[1]["position"] != globals.prev_position and media_info[0]["playback_status"] == 4:
                 if isinstance(media_info[1]["position"], int) and media_info[1]["position"] != 0:
                     globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                    globals.gui.time_scrubber_opacity.setOpacity(1.0)
                 else:
                     globals.gui.time_scrubber.setValue(0)
+                    globals.gui.time_scrubber_opacity.setOpacity(0.0)
                 globals.gui.play_pause.set_state(True)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = False
             elif media_info[0]["playback_status"] != 4:
                 if isinstance(media_info[1]["position"], int) and media_info[1]["position"] != 0:
                     globals.gui.time_scrubber.setValue(media_info[1]["position"])
+                    globals.gui.time_scrubber_opacity.setOpacity(1.0)
                 else:
                     globals.gui.time_scrubber.setValue(0)
+                    globals.gui.time_scrubber_opacity.setOpacity(0.0)
                 globals.gui.play_pause.set_state(False)
                 globals.prev_position = media_info[1]["position"]
                 globals.paused = True
@@ -106,7 +107,7 @@ async def listener_loop():
         else:
             if globals.settings.value("autoHide", 1):
                 if globals.timeout is None:
-                    globals.timeout = 10
+                    globals.timeout = 5
                 elif globals.timeout > 0:
                     globals.timeout -= 1
                 if globals.timeout == 0:
@@ -115,6 +116,7 @@ async def listener_loop():
                         if globals.settings.value("discordRPC", 0) and globals.discord_rpc._discord_rpc is not None:
                             globals.discord_rpc.shutdown()
             globals.gui.time_scrubber.setValue(0)
+            globals.gui.time_scrubber_opacity.setOpacity(0.0)
             globals.gui.play_pause.set_state(False)
             globals.prev_position = 0
             globals.paused = True
@@ -131,11 +133,10 @@ async def listener_loop():
                 presence["start_timestamp"] = int(time.time()) - int(media_info[1]["position"] / 1000)
             for item in presence:
                 should_update_presence = False
-                if globals.rpc_counter == 3: should_update_presence = True
                 if not globals.prev_presence: should_update_presence = True
                 if not should_update_presence:
                     if item != "start_timestamp" and globals.prev_presence.get(item) != presence.get(item): should_update_presence = True
-                    if item == "start_timestamp" and globals.prev_presence.get(item) not in range(int(presence.get(item))-1, int(presence.get(item))+2): should_update_presence = True
+                    if item == "start_timestamp" and globals.prev_presence.get(item) not in list(range(int(presence.get(item))-6, int(presence.get(item))+7)): should_update_presence = True
                 if should_update_presence:
                     globals.discord_rpc.update_presence(**presence)
                     globals.discord_rpc.update_connection()
@@ -145,11 +146,12 @@ async def listener_loop():
             for item in presence:
                 globals.prev_presence[item] = presence[item]
 
-        next_update = time.time() + 0.5
+        next_update = time.time() + 1
         while time.time() < next_update:
             if not globals.gui.time_scrubber.scrubbing and not globals.paused:
                 globals.gui.time_scrubber.setValue(globals.gui.time_scrubber.value() + 100)
             await asyncio.sleep(0.1)
+
 
 # Example response from api.get_media_info()
 """
