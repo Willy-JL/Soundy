@@ -7,7 +7,7 @@ import asyncio
 from modules import globals, api
 
 
-class MusicButton(QPushButton):
+class DynamicButton(QPushButton):
     def __init__(self, parent, callback: FunctionType, font, size, default_state, buttons: dict):
         super().__init__(parent)
         self.hovered = False
@@ -34,7 +34,7 @@ class MusicButton(QPushButton):
         self.setText(self.buttons[self.state][self.hovered])
 
 
-class MusicScrubber(QSlider):
+class TimeScrubber(QSlider):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.scrubbing = False
@@ -48,7 +48,7 @@ class MusicScrubber(QSlider):
         x = event.pos().x()
         value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
         self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
+        globals.loop.create_task(api.seek(value))
 
     def mouseMoveEvent(self, event):
         self.scrubbing = True
@@ -63,7 +63,7 @@ class MusicScrubber(QSlider):
         x = event.pos().x()
         value = (self.maximum() - self.minimum()) * x / self.width() + self.minimum()
         self.setValue(value)
-        asyncio.get_event_loop().create_task(api.seek(value))
+        globals.loop.create_task(api.seek(value))
 
 
 class MarqueeLabel(QLabel):
@@ -101,3 +101,12 @@ class MarqueeLabel(QLabel):
         painter.setFont(self.font())
         painter.setPen(self.color)
         painter.drawText(self.label_x, self.height() - 7, self.text())
+
+
+class MouseTransparentWidget(QWidget):
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        region = QRegion(self.frameGeometry())
+        region -= QRegion(self.geometry())
+        region += self.childrenRegion()
+        self.setMask(region)

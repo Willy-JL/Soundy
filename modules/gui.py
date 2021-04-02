@@ -47,8 +47,8 @@ class SoundyGUI(QMainWindow):
         self.info_section.setContentsMargins(0, 0, 0, 0)
         self.info_layout = QVBoxLayout(self.info_section)
         self.info_layout.setObjectName(u"info_layout")
-        self.info_layout.setSpacing(2)
-        self.info_layout.setContentsMargins(0, 4, 0, 0)
+        self.info_layout.setSpacing(3)
+        self.info_layout.setContentsMargins(0, 2, 0, 0)
 
         self.title = widgets.MarqueeLabel(self.info_section)
         self.title.setObjectName(u"title")
@@ -68,7 +68,7 @@ class SoundyGUI(QMainWindow):
 
         self.info_layout.addWidget(self.artist, stretch=0, alignment=Qt.AlignLeft)
 
-        self.time_scrubber = widgets.MusicScrubber(self.info_section)
+        self.time_scrubber = widgets.TimeScrubber(self.info_section)
         self.time_scrubber.setObjectName(u"time_scrubber")
         width = 181
         height = 8
@@ -88,7 +88,7 @@ class SoundyGUI(QMainWindow):
         self.main_grid.addWidget(self.info_section, 1, 1, 1, 1)
 
 
-        self.controls_section = QWidget(self.main)
+        self.controls_section = widgets.MouseTransparentWidget(self.main)
         self.controls_section.setObjectName(u"controls_section")
         self.controls_section.setContentsMargins(0, 0, 0, 0)
         self.controls_layout = QHBoxLayout(self.controls_section)
@@ -99,7 +99,7 @@ class SoundyGUI(QMainWindow):
         self.spacer_left = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.controls_layout.addItem(self.spacer_left)
 
-        self.shuffle = widgets.MusicButton(self.controls_section, api.set_shuffle, globals.font_mdi_18, 20, False, {
+        self.shuffle = widgets.DynamicButton(self.controls_section, api.set_shuffle, globals.font_mdi_18, 20, False, {
             True: {
                 True:  "󰒝",
                 False: "󰒝"
@@ -116,7 +116,7 @@ class SoundyGUI(QMainWindow):
 
         self.controls_layout.addWidget(self.shuffle)
 
-        self.skip_prev = widgets.MusicButton(self.controls_section, api.skip_prev, globals.font_mdi_26, 30, "normal", {
+        self.skip_prev = widgets.DynamicButton(self.controls_section, api.skip_prev, globals.font_mdi_26, 30, "normal", {
             "normal": {
                 True:  "󰒮",
                 False: "󰼨"
@@ -129,7 +129,7 @@ class SoundyGUI(QMainWindow):
 
         self.controls_layout.addWidget(self.skip_prev)
 
-        self.play_pause = widgets.MusicButton(self.controls_section, api.play_pause, globals.font_mdi_38, 43, False, {
+        self.play_pause = widgets.DynamicButton(self.controls_section, api.play_pause, globals.font_mdi_38, 43, False, {
             True: {
                 True:  "󰏥",
                 False: "󰏦"
@@ -146,7 +146,7 @@ class SoundyGUI(QMainWindow):
 
         self.controls_layout.addWidget(self.play_pause)
 
-        self.skip_next = widgets.MusicButton(self.controls_section, api.skip_next, globals.font_mdi_26, 30, "normal", {
+        self.skip_next = widgets.DynamicButton(self.controls_section, api.skip_next, globals.font_mdi_26, 30, "normal", {
             "normal": {
                 True:  "󰒭",
                 False: "󰼧"
@@ -159,7 +159,7 @@ class SoundyGUI(QMainWindow):
 
         self.controls_layout.addWidget(self.skip_next)
 
-        self.repeat = widgets.MusicButton(self.controls_section, api.set_repeat, globals.font_mdi_18, 20, 0, {
+        self.repeat = widgets.DynamicButton(self.controls_section, api.set_repeat, globals.font_mdi_18, 20, 0, {
             2: {
                 True:  "󰑖",
                 False: "󰑖"
@@ -189,7 +189,7 @@ class SoundyGUI(QMainWindow):
             self.main_grid.addWidget(self.controls_section, 0, 0, 1, 2)
 
 
-        self.close_button = widgets.MusicButton(self.main, lambda: globals.gui.close(), globals.font_mdi_13, 15, "normal", {
+        self.close_button = widgets.DynamicButton(self.main, lambda: globals.gui.close(), globals.font_mdi_13, 15, "normal", {
             "normal": {
                 True:  "󰅙",
                 False: "󰅚"
@@ -202,7 +202,7 @@ class SoundyGUI(QMainWindow):
 
         self.close_button.move(228, 6)
 
-        self.settings_button = widgets.MusicButton(self.main, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
+        self.settings_button = widgets.DynamicButton(self.main, lambda: globals.settings_gui.show(), globals.font_mdi_13, 15, "normal", {
             "normal": {
                 True:  "󰒓",
                 False: "󰢻"
@@ -214,11 +214,11 @@ class SoundyGUI(QMainWindow):
         self.settings_button.setGraphicsEffect(self.settings_button_opacity)
 
         if globals.settings.value("compactMode", 1):
-            self.settings_button.move(75, 6)
+            self.settings_button.move(75, 45)
         else:
-            self.settings_button.move(6, 6)
+            self.settings_button.move(6, 36)
 
-        self.compact_button = widgets.MusicButton(self.main, self.toggle_compact_mode, globals.font_mdi_13, 15, globals.settings.value("compactMode", 1), {
+        self.compact_button = widgets.DynamicButton(self.main, self.toggle_compact_mode, globals.font_mdi_13, 15, globals.settings.value("compactMode", 1), {
             1: {
                 True:  "󰬬",
                 False: "󰬭"
@@ -234,9 +234,29 @@ class SoundyGUI(QMainWindow):
         self.compact_button.setGraphicsEffect(self.compact_button_opacity)
 
         if globals.settings.value("compactMode", 1):
-            self.compact_button.move(3, 3)
+            self.compact_button.move(75, 6)
         else:
-            self.compact_button.move(3, 60)
+            self.compact_button.move(6, 6)
+
+        self.pinned_button = widgets.DynamicButton(self.main, lambda e=None: [globals.settings.setValue("pinnedPosition", int(not bool(globals.settings.value("pinnedPosition", 0)))), globals.gui.pinned_button.set_state(globals.settings.value("pinnedPosition", 0))], globals.font_mdi_13, 15, globals.settings.value("pinnedPosition", 0), {
+            1: {
+                True:  "󰐃",
+                False: "󰤱"
+            },
+            0: {
+                True:  "󰐄",
+                False: "󰤰"
+            }
+        })
+        self.pinned_button.setObjectName(u"pinned_button")
+        self.pinned_button_opacity = QGraphicsOpacityEffect(self.pinned_button)
+        self.pinned_button_opacity.setOpacity(0.0)
+        self.pinned_button.setGraphicsEffect(self.pinned_button_opacity)
+
+        if globals.settings.value("compactMode", 1):
+            self.pinned_button.move(228, 45)
+        else:
+            self.pinned_button.move(228, 36)
 
 
         self.fade_left = QWidget(self.main)
@@ -270,14 +290,16 @@ class SoundyGUI(QMainWindow):
         self.setWindowTitle("Soundy")
         self.update_track_info()
         self.update_cover_art()
-        globals.loop.create_task(self.toggle_controls(True, True))
+        if not globals.settings.value("compactMode", 1):
+            globals.loop.create_task(self.toggle_controls(True))
 
     def closeEvent(self, event):
         api.exit_handler(event)
 
     def mousePressEvent(self, event):
         self.old_pos = event.globalPos()
-        self.can_drag = True
+        if not globals.settings.value("pinnedPosition", 0):
+            self.can_drag = True
 
     def mouseReleaseEvent(self, event):
         self.can_drag = False
@@ -289,10 +311,12 @@ class SoundyGUI(QMainWindow):
             self.old_pos = event.globalPos()
 
     def enterEvent(self, event):
-        asyncio.get_event_loop().create_task(self.toggle_controls(True))
+        if globals.settings.value("compactMode", 1):
+            globals.loop.create_task(self.toggle_controls(True))
 
     def leaveEvent(self, event):
-        asyncio.get_event_loop().create_task(self.toggle_controls(False))
+        if globals.settings.value("compactMode", 1):
+            globals.loop.create_task(self.toggle_controls(False))
 
     @asyncSlot()
     async def toggle_compact_mode(self, *args):
@@ -305,8 +329,9 @@ class SoundyGUI(QMainWindow):
             self.main_grid.removeWidget(self.controls_section)
             self.main_grid.addWidget(self.controls_section, 1, 1, 1, 1)
             self.close_button.move(228, 6)
-            self.settings_button.move(75, 6)
-            self.compact_button.move(3, 3)
+            self.settings_button.move(75, 45)
+            self.compact_button.move(75, 6)
+            self.pinned_button.move(228, 45)
         else:
             self.setFixedSize(250, 126)
             self.move(self.x(), self.y()-57)
@@ -314,11 +339,12 @@ class SoundyGUI(QMainWindow):
             self.main_grid.removeWidget(self.controls_section)
             self.main_grid.addWidget(self.controls_section, 0, 0, 1, 2)
             self.close_button.move(228, 6)
-            self.settings_button.move(6, 6)
-            self.compact_button.move(3, 60)
-        await self.toggle_controls(True, True)
+            self.settings_button.move(6, 36)
+            self.compact_button.move(6, 6)
+            self.pinned_button.move(228, 36)
+        await self.toggle_controls(True)
 
-    async def toggle_controls(self, toggle, update=False):
+    async def toggle_controls(self, toggle):
         if globals.settings.value("compactMode", 1):
             anim_list = [
                 [QPropertyAnimation(self.title_opacity,           b"opacity"), False],
@@ -332,28 +358,25 @@ class SoundyGUI(QMainWindow):
                 [QPropertyAnimation(self.repeat_opacity,          b"opacity"), True ],
                 [QPropertyAnimation(self.settings_button_opacity, b"opacity"), True ],
                 [QPropertyAnimation(self.close_button_opacity,    b"opacity"), True ],
-                [QPropertyAnimation(self.compact_button_opacity,  b"opacity"), True ]
+                [QPropertyAnimation(self.compact_button_opacity,  b"opacity"), True ],
+                [QPropertyAnimation(self.pinned_button_opacity,   b"opacity"), True ]
             ]
         else:
-            if update:
-                anim_list = [
-                    [QPropertyAnimation(self.title_opacity,           b"opacity"), True ],
-                    [QPropertyAnimation(self.artist_opacity,          b"opacity"), True ],
-                    [QPropertyAnimation(self.fade_left_opacity,       b"opacity"), True ],
-                    [QPropertyAnimation(self.fade_right_opacity,      b"opacity"), True ],
-                    [QPropertyAnimation(self.shuffle_opacity,         b"opacity"), True ],
-                    [QPropertyAnimation(self.skip_prev_opacity,       b"opacity"), True ],
-                    [QPropertyAnimation(self.play_pause_opacity,      b"opacity"), True ],
-                    [QPropertyAnimation(self.skip_next_opacity,       b"opacity"), True ],
-                    [QPropertyAnimation(self.repeat_opacity,          b"opacity"), True ],
-                    [QPropertyAnimation(self.settings_button_opacity, b"opacity"), True ],
-                    [QPropertyAnimation(self.close_button_opacity,    b"opacity"), True ],
-                    [QPropertyAnimation(self.compact_button_opacity,  b"opacity"), True ]
-                ]
-            else:
-                anim_list = [
-                    [QPropertyAnimation(self.compact_button_opacity,  b"opacity"), True ]
-                ]
+            anim_list = [
+                [QPropertyAnimation(self.title_opacity,           b"opacity"), True ],
+                [QPropertyAnimation(self.artist_opacity,          b"opacity"), True ],
+                [QPropertyAnimation(self.fade_left_opacity,       b"opacity"), True ],
+                [QPropertyAnimation(self.fade_right_opacity,      b"opacity"), True ],
+                [QPropertyAnimation(self.shuffle_opacity,         b"opacity"), True ],
+                [QPropertyAnimation(self.skip_prev_opacity,       b"opacity"), True ],
+                [QPropertyAnimation(self.play_pause_opacity,      b"opacity"), True ],
+                [QPropertyAnimation(self.skip_next_opacity,       b"opacity"), True ],
+                [QPropertyAnimation(self.repeat_opacity,          b"opacity"), True ],
+                [QPropertyAnimation(self.settings_button_opacity, b"opacity"), True ],
+                [QPropertyAnimation(self.close_button_opacity,    b"opacity"), True ],
+                [QPropertyAnimation(self.compact_button_opacity,  b"opacity"), True ],
+                [QPropertyAnimation(self.pinned_button_opacity,   b"opacity"), True ]
+            ]
         for anim in anim_list:
             anim[0].setDuration(75)
             anim_toggle = toggle
