@@ -152,8 +152,7 @@ def exit_handler(event=None):
     if globals.tray:
         globals.tray.hide()
     if globals.settings and globals.gui:
-        globals.settings.setValue("geometry", globals.gui.saveGeometry())
-        globals.settings.setValue("windowState", globals.gui.saveState())
+        globals.gui.save_geometry()
     if globals.loop:
         globals.loop.stop()
     if event is not None:

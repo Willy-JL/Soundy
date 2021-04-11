@@ -297,6 +297,9 @@ class SoundyGUI(QMainWindow):
         self.update_cover_art()
         if not globals.settings.value("compactMode", 1):
             globals.loop.create_task(self.toggle_controls(True))
+    def save_geometry(self):
+        globals.settings.setValue("geometry", self.saveGeometry())
+        globals.settings.setValue("windowState", self.saveState())
 
     def mouse_over_self(self):
         return self.mouse_handle.position[0] in range(self.pos().x(), self.pos().x() + self.size().width()) and self.mouse_handle.position[1] in range(self.pos().y(), self.pos().y() + self.size().height())

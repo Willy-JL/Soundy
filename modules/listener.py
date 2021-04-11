@@ -151,6 +151,7 @@ async def listener_loop():
             if not globals.gui.time_scrubber.scrubbing and not globals.paused:
                 globals.gui.time_scrubber.setValue(globals.gui.time_scrubber.value() + 100)
             await asyncio.sleep(0.1)
+        globals.gui.save_geometry()
 
 
 # Example response from api.get_media_info()
