@@ -25,7 +25,6 @@ cmd.exe /c del /f /q dist\windows\Soundy\Qt5Quick.dll
 cmd.exe /c del /f /q dist\windows\Soundy\Qt5Svg.dll
 cmd.exe /c del /f /q dist\windows\Soundy\Qt5WebSockets.dll
 cmd.exe /c del /f /q dist\windows\Soundy\ucrtbase.dll
-cmd.exe /c del /f /q dist\windows\Soundy\unicodedata.pyd
 cmd.exe /c del /f /q dist\windows\Soundy\VCRUNTIME140.dll
 cmd.exe /c del /f /q dist\windows\Soundy\VCRUNTIME140_1.dll
 cmd.exe /c del /f /q dist\windows\Soundy\win32trace.pyd

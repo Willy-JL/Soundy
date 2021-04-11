@@ -3,5 +3,6 @@ qasync
 Pillow
 pywin32
 colorthief
+pynput==1.6.8
 PyQt5==5.15.2
 discord-rpc.py

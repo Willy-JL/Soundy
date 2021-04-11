@@ -47,7 +47,6 @@ jobs:
           rm -rf dist/windows/Soundy/Qt5Svg.dll
           rm -rf dist/windows/Soundy/Qt5WebSockets.dll
           rm -rf dist/windows/Soundy/ucrtbase.dll
-          rm -rf dist/windows/Soundy/unicodedata.pyd
           rm -rf dist/windows/Soundy/VCRUNTIME140.dll
 
       - name: Move libs to lib dir
