@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import webbrowser
 import asyncio
+import pynput
 import sys
 
 from modules import globals, api, widgets
@@ -13,6 +14,10 @@ class SoundyGUI(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent, Qt.WindowFlags())
         self.can_drag = False
+        self.switching = False
+        self.key_listener = pynput.keyboard.Listener(on_release=lambda key: asyncio.run(self.on_key_release(key)))
+        self.key_listener.start()
+        self.mouse_handle = pynput.mouse.Controller()
         self.setWindowIcon(QIcon('resources/icons/icon.png'))
         self.setObjectName(u"Soundy")
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
@@ -292,6 +297,19 @@ class SoundyGUI(QMainWindow):
         self.update_cover_art()
         if not globals.settings.value("compactMode", 1):
             globals.loop.create_task(self.toggle_controls(True))
+
+    def mouse_over_self(self):
+        return self.mouse_handle.position[0] in range(self.pos().x(), self.pos().x() + self.size().width()) and self.mouse_handle.position[1] in range(self.pos().y(), self.pos().y() + self.size().height())
+
+    async def on_key_release(self, key):
+        if self.mouse_over_self() and not self.switching and key == pynput.keyboard.Key.pause and bool(self.windowFlags() & Qt.WindowStaysOnTopHint):
+            self.switching = True
+            self.setWindowFlags(self.windowFlags() ^ Qt.WindowTransparentForInput)
+            if self.windowFlags() & Qt.WindowTransparentForInput:
+                self.setWindowOpacity(0.6)
+            else:
+                self.setWindowOpacity(1.0)
+            self.switching = False
 
     def closeEvent(self, event):
         api.exit_handler(event)
@@ -639,6 +657,12 @@ class SoundySettings(QWidget):
 
     def set_always_on_top(self, *args):
         globals.settings.setValue("alwaysOnTop", int(self.always_on_top.isChecked()))
+        if globals.settings.value("alwaysOnTop", 1):
+            globals.gui.setWindowFlags(globals.gui.windowFlags() | Qt.WindowStaysOnTopHint | Qt.Tool & ~Qt.WindowTransparentForInput)
+            self.setWindowOpacity(1.0)
+        else:
+            globals.gui.setWindowFlags(globals.gui.windowFlags() & ~Qt.WindowStaysOnTopHint & ~Qt.Tool & ~Qt.WindowTransparentForInput)
+            self.setWindowOpacity(1.0)
 
     def set_auto_hide(self, *args):
         globals.settings.setValue("autoHide", int(self.auto_hide.isChecked()))
