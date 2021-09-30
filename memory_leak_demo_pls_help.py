@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # Pause to check starting memory usage (I used task manager)
     # ~ 30 MB in my case
     input()
-    
+
     # Track objects and sizes
     tracker = SummaryTracker()
 
